@@ -13,7 +13,7 @@ INCLUDE(CMake.in.config)
 FIND_PACKAGE(PkgConfig REQUIRED)
 
 IF(NOT openfluid_FOUND)
-  PKG_CHECK_MODULES(openfluid REQUIRED openfluid)
+  PKG_CHECK_MODULES(openfluid REQUIRED openfluid-gui)
 ENDIF(NOT openfluid_FOUND)
 
 PKG_CHECK_MODULES(GTKMM REQUIRED gtkmm-2.4)

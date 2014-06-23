@@ -33,9 +33,10 @@ package org.lisah.openfluid.newfunc.wizards;
 public class FunctionVariable {
 
 	public String name;
+	public String type;
 	public String unitClass;
 	public String description;
-	public String valueUnit;
+	public String SIUnit;
 	public Boolean isRequired;
 	public Boolean isPrevious;
 	public Boolean isProduced;
@@ -48,8 +49,9 @@ public class FunctionVariable {
 		this.isProduced = false;
 		this.isUpdated = false;
 		this.name = "";
+		this.type = "";
 		this.unitClass = "";
-		this.valueUnit = "";
+		this.SIUnit = "";
 	}
 
 }

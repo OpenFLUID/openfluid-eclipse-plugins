@@ -28,7 +28,7 @@
 */
 
 
-package org.lisah.openfluid.newfunc.wizards;
+package org.lisah.openfluid.newbuilderext.wizards;
 
 
 
@@ -49,7 +49,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -70,10 +69,9 @@ public class SourcesWizardPage extends WizardPage {
 	private Button buildCheck;
 	private Group sourcesGroup;
 	private Group buildGroup;
-	private Combo filesCombo;
 	private Button runCMakeCheck;
 
-	private Text funcClassText;
+	private Text extClassText;
 	
 
 	private ISelection selection;
@@ -87,7 +85,7 @@ public class SourcesWizardPage extends WizardPage {
 
 	public SourcesWizardPage(ISelection selection,Boolean isCMakeFound) {
 		super("wizardPage");
-		setTitle("OpenFLUID simulation function");
+		setTitle("OpenFLUID builder extension");
 		setDescription("Sources files and build system");
 		this.selection = selection;
 		this.isCMakeFound = isCMakeFound;
@@ -211,21 +209,6 @@ public class SourcesWizardPage extends WizardPage {
 				dialogChanged();
 			}
 		});	
-
-		label = new Label(sourcesGroup, SWT.RIGHT);
-		label.setText("&Sources format:");
-		data = new GridData ();
-		data.horizontalAlignment = GridData.FILL;
-		label.setLayoutData (data);				
-		
-		filesCombo = new Combo(sourcesGroup, SWT.READ_ONLY);
-		filesCombo.add(".cpp and .h files");
-		filesCombo.add("single .cpp file");
-		filesCombo.select(1);
-		data = new GridData ();
-//		data.horizontalAlignment = GridData.FILL;
-//		data.grabExcessHorizontalSpace = true;	
-		filesCombo.setLayoutData(data);
 		
 		label = new Label(sourcesGroup, SWT.RIGHT);
 		label.setText("&C++ class name:");
@@ -233,11 +216,11 @@ public class SourcesWizardPage extends WizardPage {
 		data.horizontalAlignment = GridData.FILL;
 		label.setLayoutData (data);
 
-		funcClassText = new Text(sourcesGroup, SWT.BORDER | SWT.SINGLE);
+		extClassText = new Text(sourcesGroup, SWT.BORDER | SWT.SINGLE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data = new GridData ();
 		data.horizontalAlignment = GridData.FILL;
-		funcClassText.setLayoutData (data);
+		extClassText.setLayoutData (data);
 
 		
 		// space
@@ -377,8 +360,8 @@ public class SourcesWizardPage extends WizardPage {
 				containerRadio.setSelection(true);
 			}
 		}
-		fileText.setText("NewFunc.cpp");
-		funcClassText.setText("NewFunction");
+		fileText.setText("NewBuilderExt.cpp");
+		extClassText.setText("NewBuilderExtension");
 	}
 
 
@@ -490,7 +473,7 @@ public class SourcesWizardPage extends WizardPage {
 	}
 
 	public String getFuncClass() {
-		return funcClassText.getText();
+		return extClassText.getText();
 	}
 	
 	
@@ -502,14 +485,13 @@ public class SourcesWizardPage extends WizardPage {
 		return installTextLabel.getText();
 	}
 	
-	public void fillFunctionProperties(FunctionProperties properties)
+	public void fillBuilderextProperties(BuilderextProperties properties)
 	{
 		properties.isNewProject = projectRadio.getSelection();
 		properties.project = projectText.getText();
 		properties.container = containerText.getText();
 		properties.sourcesFilesRoot = fileText.getText();
-		properties.className = funcClassText.getText();
-		properties.singleSourceFile = (filesCombo.getSelectionIndex() == 1);
+		properties.className = extClassText.getText();
 		
 		properties.buildSubdir = buildSubdirTextLabel.getText();
 	    properties.installDir = installTextLabel.getText();

@@ -27,23 +27,34 @@
   You and INRA.
 */
 
+package org.lisah.openfluid.common;
 
-package org.lisah.openfluid.newfunc.wizards;
+public class OpenFLUIDPluginProperties {
 
-public class FunctionInputData {
+	
+	public Boolean isNewProject;
+	public String project;
+	public String container;
+	public String sourcesFilesRoot;
+	public String className;	
+	public String buildSubdir;
+	public String installDir;
+	public Boolean runCMake;
+	public String cmakeCommandPath;
+	public Boolean createBuildSystem;
 
-	public String name;
-	public String unitClass;
-	public String description;
-	public String SIUnit;
-	public Boolean isRequired;
+	public OpenFLUIDPluginProperties() {
 
-	public FunctionInputData() {
-		this.description = "";
-		this.isRequired = true;
-		this.name = "";
-		this.unitClass = "";
-		this.SIUnit = "";
+		this.buildSubdir = "";
+		this.cmakeCommandPath = "";
+		this.createBuildSystem = false;
+		this.runCMake = false;
+		this.className = "";
+		this.isNewProject = false;
+		this.project = "";
+		this.container = "";
+
 	}
-
+	
+	
 }

@@ -28,22 +28,47 @@
 */
 
 
-package org.lisah.openfluid.newfunc.wizards;
+package org.lisah.openfluid.newbuilderext.wizards;
 
-public class FunctionInputData {
+import java.util.ArrayList;
+import org.lisah.openfluid.common.OpenFLUIDPluginProperties;
 
-	public String name;
-	public String unitClass;
-	public String description;
-	public String SIUnit;
-	public Boolean isRequired;
+public class BuilderextProperties extends OpenFLUIDPluginProperties {
+	
+	public String extID;
+	public String extType;
+	public String extShortName;
+	public String extName;	
+	public String extVersion;
+	public String extDescription;	
+	public String extAuthor;
+	public String extAuthorEmail;
+	public Boolean extIsPrefs;
+	
 
-	public FunctionInputData() {
-		this.description = "";
-		this.isRequired = true;
-		this.name = "";
-		this.unitClass = "";
-		this.SIUnit = "";
+	public ArrayList<PrefsData> extDefaultPrefs;
+	
+	public BuilderextProperties() {
+
+		super();
+		
+		extID = "";
+		extType = "";
+		extShortName = "";
+		extName = "";
+		extVersion = "";
+		extDescription = "";
+		extAuthor = "";
+		extAuthorEmail = "";
+		
+		extIsPrefs = false;
+		extDefaultPrefs = new ArrayList<PrefsData>();
+		
 	}
 
+	
+	
+	
 }
+
+

@@ -34,6 +34,16 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.*;
 import java.lang.reflect.InvocationTargetException;
@@ -48,6 +58,8 @@ import java.io.*;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
+import org.lisah.openfluid.common.OpenFLUIDCMakeTools;
+import org.lisah.openfluid.common.OpenFLUIDProjectFactory;
 import org.lisah.openfluid.newfunc.Activator;
 import org.osgi.framework.Bundle;
 
@@ -79,16 +91,14 @@ public class NewFunctionWizard extends Wizard implements INewWizard {
 		super();
 		setNeedsProgressMonitor(true);
 
-
-		
+		funcProperties = new FunctionProperties();
+		funcProperties.cmakeCommandPath = OpenFLUIDCMakeTools.findCMakeCommand();
 	}
 	
-	/**
-	 * Adding the page to the wizard.
-	 */
 
+	
 	public void addPages() {
-		sourcesPage = new SourcesWizardPage(selection);
+		sourcesPage = new SourcesWizardPage(selection,!funcProperties.cmakeCommandPath.isEmpty());
 		infosPage = new InfosWizardPage(selection);		
 		dataPage = new DataWizardPage(selection);		
 		addPage(sourcesPage);
@@ -102,9 +112,6 @@ public class NewFunctionWizard extends Wizard implements INewWizard {
 	 * using wizard as execution context.
 	 */
 	public boolean performFinish() {
-
-		
-		funcProperties = new FunctionProperties();
 		
 		sourcesPage.fillFunctionProperties(funcProperties);
 		infosPage.fillFunctionProperties(funcProperties);
@@ -140,46 +147,49 @@ public class NewFunctionWizard extends Wizard implements INewWizard {
 	private void doFinish(FunctionProperties funcProperties,IProgressMonitor monitor)
 		throws CoreException, IOException {
 		
-		monitor.beginTask("Creating files", 2);
 		
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-						
-		IResource resource = root.findMember(new Path(funcProperties.container));
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceRoot root = workspace.getRoot();
+
+        IContainer location;
+        IProject project = null;
+        		
 		
-		if (!resource.exists() || !(resource instanceof IContainer)) {
-			throwCoreException("Container \"" + funcProperties.container + "\" does not exist.");
+		if (funcProperties.isNewProject) {
+
+			monitor.beginTask("Creating project...", 2);
+
+			
+			project = OpenFLUIDProjectFactory.createProject(workspace,funcProperties.project);
+			
+			location = (IContainer)project;
+		}
+		else
+		{
+			IResource resource = root.findMember(new Path(funcProperties.container));
+			
+			if (!resource.exists() || !(resource instanceof IContainer)) {
+				throwCoreException("Container \"" + funcProperties.container + "\" does not exist.");
+			}
+			
+			location = (IContainer)resource;
 		}
 		
-		IContainer container = (IContainer) resource;
+		monitor.worked(1);
+		monitor.setTaskName("Creating source(s) file(s)...");
+
 
 		int dotPos = funcProperties.sourcesFilesRoot.lastIndexOf(".");
 		funcProperties.sourcesFilesRoot = funcProperties.sourcesFilesRoot.substring(0, dotPos);
-		
-		
-		
-		IFile cmakelistsFile = null;
-		IFile cmakeconfFile = null;
-		IFile makeFile = null;
+
 		IFile hFile = null;
-		final IFile cppFile = container.getFile(new Path(funcProperties.sourcesFilesRoot+".cpp"));
-		
+		final IFile cppFile = location.getFile(new Path(funcProperties.sourcesFilesRoot+".cpp"));
+
 		if (!funcProperties.singleSourceFile) {
-			hFile = container.getFile(new Path(funcProperties.sourcesFilesRoot+".h"));
-		}
-		
-		if (funcProperties.buildSystem.toUpperCase().contains("CMAKE")) {
-			cmakelistsFile = container.getFile(new Path("CMakeLists.txt"));
-			cmakeconfFile = container.getFile(new Path("CMake.in.config"));
-			if (funcProperties.buildFolder != "") {
-				IFolder buildFolder = container.getFolder(new Path(funcProperties.buildFolder));
-				if (!buildFolder.exists()) buildFolder.create(true, true, null);				
-			}
-		}
-			
-		if (funcProperties.buildSystem.toUpperCase().contains("MAKEFILE")) {
-			makeFile = container.getFile(new Path("makefile"));
+			hFile = location.getFile(new Path(funcProperties.sourcesFilesRoot+".h"));
 		}
 
+		
 
 		InputStream stream = null;
 		
@@ -210,49 +220,49 @@ public class NewFunctionWizard extends Wizard implements INewWizard {
 		}
 		
 		
-		
-		if (cmakelistsFile != null) {
-			
-			stream = openCMakeListsContentStream(funcProperties);
-			
-			if (cmakelistsFile.exists()) {
-				cmakelistsFile.setContents(stream, true, true, monitor);
-			} else {
-				cmakelistsFile.create(stream, true, monitor);
-			}
-			
-			stream.close();
-			
-			stream = openCMakeConfigContentStream(funcProperties);
-			
-			if (cmakeconfFile.exists()) {
-				cmakeconfFile.setContents(stream, true, true, monitor);
-			} else {
-				cmakeconfFile.create(stream, true, monitor);
-			}
-			
-			stream.close();
-			
-			
-		}
-			
+		monitor.worked(1);
+		monitor.setTaskName("Creating build system...");
 
-		if (makeFile != null) {
-			
-			stream = openMakefileContentStream(funcProperties);
-			
-			if (makeFile.exists()) {
-				makeFile.setContents(stream, true, true, monitor);
-			} else {
-				makeFile.create(stream, true, monitor);
-			}
-			
-			stream.close();
-			
-		}
-		
-		
-		
+        if (funcProperties.createBuildSystem)
+        {
+        	IFile cmakelistsFile = null;
+        	IFile cmakeconfFile = null;
+
+        	cmakelistsFile = location.getFile(new Path("CMakeLists.txt"));
+        	cmakeconfFile = location.getFile(new Path("CMake.in.config"));
+
+        	if (cmakelistsFile != null) {
+
+        		stream = openCMakeListsContentStream(funcProperties);
+
+        		if (cmakelistsFile.exists()) {
+        			cmakelistsFile.setContents(stream, true, true, monitor);
+        		} else {
+        			cmakelistsFile.create(stream, true, monitor);
+        		}
+
+        		stream.close();
+
+        		stream = openCMakeConfigContentStream(funcProperties);
+
+        		if (cmakeconfFile.exists()) {
+        			cmakeconfFile.setContents(stream, true, true, monitor);
+        		} else {
+        			cmakeconfFile.create(stream, true, monitor);
+        		}
+
+        		stream.close();
+
+        		if (funcProperties.buildSubdir != "") {
+        			monitor.worked(1);
+        			monitor.setTaskName("Configuring build system...");
+
+        			OpenFLUIDProjectFactory.configureBuildSystem(funcProperties,location,project);
+        			
+        		}
+        	}
+        }
+        
 		monitor.worked(1);
 		monitor.setTaskName("Opening file for editing...");
 		getShell().getDisplay().asyncExec(new Runnable() {
@@ -267,6 +277,8 @@ public class NewFunctionWizard extends Wizard implements INewWizard {
 				}
 			}
 		});
+		
+		location.refreshLocal(IResource.DEPTH_INFINITE, null);
 		monitor.worked(1);
 	}
 	
@@ -311,10 +323,15 @@ public class NewFunctionWizard extends Wizard implements INewWizard {
 		String funcDeclEvents = "";
 		String funcDeclFiles = "";
 
+		// replace any linefeed in description by space character 
+		// to avoid multi-line description
+		String TmpDescription = funcProperties.functionDescription;
+		TmpDescription = TmpDescription.replaceAll("\n"," ");		
+		
 		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONID\\$\\$", funcProperties.functionID);
 		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONNAME\\$\\$", funcProperties.functionName);
 		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONVERSION\\$\\$", funcProperties.functionVersion);		
-		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONDESC\\$\\$", funcProperties.functionDescription);
+		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONDESC\\$\\$", TmpDescription);
 		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONAUTHOR\\$\\$", funcProperties.functionAuthor);
 		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONAUTHOREMAIL\\$\\$", funcProperties.functionAuthorEmail);
 		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONDOMAIN\\$\\$", funcProperties.functionDomain);
@@ -335,7 +352,7 @@ public class NewFunctionWizard extends Wizard implements INewWizard {
 				funcDeclParams = funcDeclParams + "  DECLARE_FUNCTION_PARAM(\"" +
 								 param.name + "\",\"" +
 								 param.description + "\",\"" +
-								 param.valueUnit + "\")\n";
+								 param.SIUnit + "\")\n";
 			}
 		}
 
@@ -381,7 +398,7 @@ public class NewFunctionWizard extends Wizard implements INewWizard {
 				funcDeclIData = funcDeclIData + idata.name + "\",\"" +
 												idata.unitClass + "\",\"" +
 												idata.description + "\",\"" +
-								 				idata.valueUnit + "\")\n";
+								 				idata.SIUnit + "\")\n";
 			}
 		}
 		
@@ -421,10 +438,10 @@ public class NewFunctionWizard extends Wizard implements INewWizard {
 					}
 				}
 				
-				funcDeclVars = funcDeclVars + var.name + "\",\"" +
+				funcDeclVars = funcDeclVars + var.name + var.type + "\",\"" +
 											  var.unitClass + "\",\"" +
 											  var.description + "\",\"" +
-											  var.valueUnit + "\")\n";
+											  var.SIUnit + "\")\n";
 			}
 		}
 
@@ -524,24 +541,6 @@ public class NewFunctionWizard extends Wizard implements INewWizard {
 		return new ByteArrayInputStream(tplContent.getBytes());
 	}
 	
-
-	private InputStream openMakefileContentStream(FunctionProperties funcProperties)
-	throws IOException {	
-
-
-		
-		String tplContent = readTemplateFile("/resources/makefile.tpl");
-		
-		
-		
-		tplContent = tplContent.replaceAll("\\$\\$ROOTFILENAME\\$\\$", funcProperties.sourcesFilesRoot);
-		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONID\\$\\$", funcProperties.functionID);
-		String newStr = Matcher.quoteReplacement(funcProperties.installDir);
-		tplContent = tplContent.replaceAll("\\$\\$INSTALLDIR\\$\\$", newStr);		
-
-		return new ByteArrayInputStream(tplContent.getBytes());
-	}
-
 
 	private InputStream openCMakeListsContentStream(FunctionProperties funcProperties)
 	throws IOException {	

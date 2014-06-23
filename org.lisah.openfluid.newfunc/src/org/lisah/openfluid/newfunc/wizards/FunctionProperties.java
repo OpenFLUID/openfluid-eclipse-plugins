@@ -32,16 +32,11 @@ package org.lisah.openfluid.newfunc.wizards;
 
 import java.util.ArrayList;
 
-public class FunctionProperties {
+import org.lisah.openfluid.common.OpenFLUIDPluginProperties;
 
-
-	public String container;
-	public String sourcesFilesRoot;
+public class FunctionProperties extends OpenFLUIDPluginProperties {
+	
 	public Boolean singleSourceFile;
-	public String className;	
-	public String buildSystem;
-	public String buildFolder;
-	public String installDir;
 
 	public String functionID;
 	public String functionName;
@@ -65,6 +60,8 @@ public class FunctionProperties {
 	
 	public FunctionProperties() {
 
+		super();
+		
 		functionParameters = new ArrayList<FunctionParameter>();
 		functionInputData = new ArrayList<FunctionInputData>();
 		functionSpatialDyn = new ArrayList<FunctionSpatialDyn>();
@@ -72,11 +69,8 @@ public class FunctionProperties {
 		functionEvents = new ArrayList<FunctionEvent>();
 		functionExtraFiles = new ArrayList<FunctionExtraFile>();
 		
+		this.singleSourceFile = true;
 		
-		this.buildSystem = "";
-		this.buildFolder = "";
-		this.className = "";
-		this.container = "";
 		this.functionAuthor = "";
 		this.functionAuthorEmail = "";
 		this.functionDescription = "";

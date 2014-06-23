@@ -28,7 +28,7 @@
 */
 
 
-package org.lisah.openfluid.newfunc.wizards;
+package org.lisah.openfluid.newbuilderext.wizards;
 import java.text.SimpleDateFormat;
 
 import org.eclipse.jface.viewers.ISelection;
@@ -39,6 +39,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -47,13 +48,14 @@ import org.eclipse.swt.widgets.Text;
 
 public class InfosWizardPage extends WizardPage {
 	
-	private Text funcDescText;
-	private Text funcIDText;
-	private Text funcNameText;
-	private Text funcVersionText;
-	private Text funcDomainText;	
-	private Text funcAuthorsText;
-	private Text funcEmailsText;
+	private Text extDescText;
+	private Text extIDText;
+	private Text extShortNameText;
+	private Text extNameText;
+	private Text extVersionText;
+	private Combo extTypeCombo;	
+	private Text extAuthorsText;
+	private Text extEmailsText;
 
 
 	/**
@@ -63,8 +65,8 @@ public class InfosWizardPage extends WizardPage {
 	 */
 	public InfosWizardPage(ISelection selection) {
 		super("wizardPage");
-		setTitle("OpenFLUID simulation function");
-		setDescription("Function ID and meta-information");
+		setTitle("OpenFLUID builder extension");
+		setDescription("Extension ID and meta-information");
 		
 	}
 
@@ -84,43 +86,88 @@ public class InfosWizardPage extends WizardPage {
 		layout.makeColumnsEqualWidth = false;
 		
 		
-		// function ID		
+		// extension ID		
 		label = new Label(container, SWT.RIGHT);
-		label.setText("Function ID:");
+		label.setText("Extension ID:");
 		data = new GridData ();
 		data.horizontalAlignment = GridData.FILL;
 		label.setLayoutData (data);
-		
-		
-		funcIDText = new Text(container, SWT.BORDER | SWT.SINGLE);
+				
+		extIDText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data = new GridData ();
 		data.horizontalAlignment = GridData.FILL;
 		data.horizontalSpan = 2;
-		funcIDText.setLayoutData (data);
-		funcIDText.addModifyListener(new ModifyListener() {
+		extIDText.setLayoutData (data);
+		extIDText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				dialogChanged();
 			}
 		});
 		
-		// function name		
+		
 		label = new Label(container, SWT.RIGHT);
-		label.setText("Function name:");
+		label.setText("&Extension type:");
+		data = new GridData ();
+		data.horizontalAlignment = GridData.FILL;		
+		label.setLayoutData (data);				
+		
+		extTypeCombo = new Combo(container, SWT.READ_ONLY);
+//		extTypeCombo.add("HomeLauncher");
+		extTypeCombo.add("EventsImporter");
+		extTypeCombo.add("ExtraImporter");
+		extTypeCombo.add("InputdataImporter");
+		extTypeCombo.add("SpatialgraphImporter");
+		extTypeCombo.add("MixedImporter");
+		extTypeCombo.add("WorkspaceTab");
+		extTypeCombo.add("SimulationListener");		
+		extTypeCombo.add("ModalWindow");
+		extTypeCombo.add("ModelessWindow");		
+
+		
+		extTypeCombo.select(0);
+		data = new GridData ();
+		data.horizontalAlignment = GridData.FILL;
+		data.horizontalSpan = 2;
+		extTypeCombo.setLayoutData(data);
+
+		
+		// extension shortname		
+		label = new Label(container, SWT.RIGHT);
+		label.setText("Extension short name:");
+		data = new GridData ();
+		data.horizontalAlignment = GridData.FILL;
+		label.setLayoutData (data);
+		
+		extShortNameText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data = new GridData ();
+		data.horizontalAlignment = GridData.FILL;
+		data.horizontalSpan = 2;
+		extShortNameText.setLayoutData (data);
+		extShortNameText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				dialogChanged();
+			}
+		});
+		
+		// extension name		
+		label = new Label(container, SWT.RIGHT);
+		label.setText("Extension name:");
 		data = new GridData ();
 		data.horizontalAlignment = GridData.FILL;
 		label.setLayoutData (data);
 
-		funcNameText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		extNameText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		//data = new GridData(GridData.FILL_HORIZONTAL);
 		data = new GridData ();
 		data.horizontalAlignment = GridData.FILL;		
 		data.horizontalSpan = 2;
-		funcNameText.setLayoutData (data);
+		extNameText.setLayoutData (data);
 		
-		// function version
+		// extension version
 		label = new Label(container, SWT.RIGHT);
-		label.setText("Function version:");
+		label.setText("Extension version:");
 		data = new GridData ();
 		data.horizontalAlignment = GridData.FILL;
 		label.setLayoutData (data);
@@ -137,31 +184,18 @@ public class InfosWizardPage extends WizardPage {
 			dateFormatter = new SimpleDateFormat("yy.MM");
 		}			
 			
-		funcVersionText = new Text(container, SWT.BORDER | SWT.SINGLE);
-		funcVersionText.setText(dateFormatter.format(currentDate.getTime()));
+		extVersionText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		extVersionText.setText(dateFormatter.format(currentDate.getTime()));
 		//data = new GridData(GridData.FILL_HORIZONTAL);
 		data = new GridData ();
 		data.horizontalAlignment = GridData.FILL;		
 		data.horizontalSpan = 2;
-		funcVersionText.setLayoutData (data);		
+		extVersionText.setLayoutData (data);		
 
-		// function domain		
-		label = new Label(container, SWT.RIGHT);
-		label.setText("Function Domain:");
-		data = new GridData ();
-		data.horizontalAlignment = GridData.FILL;
-		label.setLayoutData (data);
-
-		funcDomainText = new Text(container, SWT.BORDER | SWT.SINGLE);
-		//data = new GridData(GridData.FILL_HORIZONTAL);
-		data = new GridData ();
-		data.horizontalAlignment = GridData.FILL;		
-		data.horizontalSpan = 2;
-		funcDomainText.setLayoutData (data);
 		
 		
 		
-		// function description		
+		// extension description		
 		label = new Label(container, SWT.TOP | SWT.RIGHT);
 		label.setText("Description:");
 		data = new GridData ();
@@ -169,44 +203,44 @@ public class InfosWizardPage extends WizardPage {
 		data.horizontalAlignment = GridData.FILL;
 		label.setLayoutData (data);
 		
-		funcDescText = new Text(container, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL );
+		extDescText = new Text(container, SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL );
 		//data = new GridData(GridData.FILL_HORIZONTAL);
 		data = new GridData ();
 		data.heightHint = 100;
 		data.horizontalAlignment = GridData.FILL;
 		data.horizontalSpan = 2;
 		data.grabExcessHorizontalSpace = true;
-		funcDescText.setLayoutData (data);
+		extDescText.setLayoutData (data);
 		
-		// function authors		
+		// extension authors		
 		label = new Label(container, SWT.RIGHT);
 		label.setText("Author(s):");
 		data = new GridData ();
 		data.horizontalAlignment = GridData.FILL;
 		label.setLayoutData (data);
 		
-		funcAuthorsText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		extAuthorsText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data = new GridData ();
 		data.horizontalAlignment = GridData.FILL;
 		data.horizontalSpan = 2;
 		data.grabExcessHorizontalSpace = true;
-		funcAuthorsText.setLayoutData (data);
+		extAuthorsText.setLayoutData (data);
 
-		// function authors 's email
+		// extension authors 's email
 		label = new Label(container, SWT.RIGHT);
 		label.setText("Author(s)'s email(s):");
 		data = new GridData ();
 		data.horizontalAlignment = GridData.FILL;
 		label.setLayoutData (data);
 		
-		funcEmailsText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		extEmailsText = new Text(container, SWT.BORDER | SWT.SINGLE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data = new GridData ();
 		data.horizontalAlignment = GridData.FILL;
 		data.horizontalSpan = 2;
 		data.grabExcessHorizontalSpace = true;
-		funcEmailsText.setLayoutData (data);
+		extEmailsText.setLayoutData (data);
 		
 		
 		
@@ -228,7 +262,7 @@ public class InfosWizardPage extends WizardPage {
 		if (visible) {
 			getShell().getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					funcIDText.setFocus();
+					extIDText.setFocus();
 				}
 			});
 
@@ -238,8 +272,13 @@ public class InfosWizardPage extends WizardPage {
 	
 
 	private void dialogChanged() {
-		if (getFuncID().length() == 0) {
-			updateStatus("Function ID must be specified");
+		if (extIDText.getText().length() == 0) {
+			updateStatus("Extension ID must be specified");
+			return;
+		}
+		
+		if (extShortNameText.getText().length() == 0) {
+			updateStatus("Extension short name must be specified");
 			return;
 		}
 
@@ -251,45 +290,16 @@ public class InfosWizardPage extends WizardPage {
 		setPageComplete(message == null);
 	}
 
-	
-	public String getFuncID() {
-		return funcIDText.getText();
-	}	
-	
-	public String getFuncName() {
-		return funcNameText.getText();
-	}	
 
-	public String getFuncVersion() {
-		return funcVersionText.getText();
-	}		
-	
-	public String getFuncDomain() {
-		return funcDomainText.getText();
-	}	
-	
-	
-	public String getFuncDesc() {
-		return funcDescText.getText();
-	}		
-	
-	public String getFuncAuthors() {
-		return funcAuthorsText.getText();
-	}	
-	
-	public String getFuncEmails() {
-		return funcEmailsText.getText();
-	}	
-	
-	public void fillFunctionProperties(FunctionProperties properties)
+	public void fillBuilderextProperties(BuilderextProperties properties)
 	{
-		properties.functionID = funcIDText.getText();
-		properties.functionName = funcNameText.getText();
-		properties.functionVersion = funcVersionText.getText();
-		properties.functionDomain = funcDomainText.getText();
-		properties.functionDescription = funcDescText.getText();
-		properties.functionAuthor = funcAuthorsText.getText();
-		properties.functionAuthorEmail = funcEmailsText.getText();
+        properties.extID = extIDText.getText();
+        properties.extType = extTypeCombo.getText();
+        properties.extName = extNameText.getText();
+        properties.extShortName = extShortNameText.getText();
+        properties.extDescription = extDescText.getText();
+        properties.extAuthor = extAuthorsText.getText();
+        properties.extAuthorEmail = extEmailsText.getText();
 	}	
 	
 	

@@ -175,9 +175,6 @@ public class DataWizardPage extends WizardPage {
 	public void createControl(Composite parent) {
 	
 		GridData data;
-		
-//		Label label;
-
 		TabFolder dataTab;
 
 		existingUnits = new ArrayList<String>();
@@ -204,7 +201,7 @@ public class DataWizardPage extends WizardPage {
 		
 		colsTitles.clear();
 		colsTitles.add("Name");
-		colsTitles.add("Value unit"); 
+		colsTitles.add("SI unit"); 
 		colsTitles.add("Description");
 		
 		
@@ -234,12 +231,13 @@ public class DataWizardPage extends WizardPage {
 		    	dataDialog = new FunctionDataDialog(getControl().getShell());
 				if (dataDialog.open("Add parameter declaration",
 						true, "", false, "", 
+						false, "", 
 						true, "", FunctionDataDialog.dataConditionType.None, "", 
 						false, "", true, "", existingUnits))
 				{				
 					TableItem item = new TableItem (paramsTable, SWT.NONE);
 					item.setText (0, dataDialog.getName());
-					item.setText (1, dataDialog.getValueUnit());
+					item.setText (1, dataDialog.getSIUnit());
 					item.setText (2, dataDialog.getDescription());
 				}
 
@@ -256,12 +254,13 @@ public class DataWizardPage extends WizardPage {
 				TableItem item = paramsTable.getItem(paramsTable.getSelectionIndex()); 
 					
 				if (dataDialog.open("Edit parameter declaration",
-						true, item.getText(0),false , "", 
+						true, item.getText(0), false, "",
+						false , "", 
 						true, item.getText(1), FunctionDataDialog.dataConditionType.None, "", 
 						false, "", true, item.getText(2), existingUnits))
 				{							
 					item.setText (0, dataDialog.getName());
-					item.setText (1, dataDialog.getValueUnit());
+					item.setText (1, dataDialog.getSIUnit());
 					item.setText (2, dataDialog.getDescription());
 				}
 
@@ -313,7 +312,8 @@ public class DataWizardPage extends WizardPage {
 		    	dataDialog = new FunctionDataDialog(getControl().getShell());
 		    	
 				if (dataDialog.open("Add spatial dynamic declaration",
-						false, "", true, "", false, "", FunctionDataDialog.dataConditionType.None, "", false, "", true, "", existingUnits)) {
+						false, "",  false, "", 
+						true, "", false, "", FunctionDataDialog.dataConditionType.None, "", false, "", true, "", existingUnits)) {
 
 					TableItem item = new TableItem (sdgraphTable, SWT.NONE);					
 					item.setText (0, dataDialog.getUnitClass());
@@ -333,7 +333,8 @@ public class DataWizardPage extends WizardPage {
 				TableItem item = sdgraphTable.getItem(sdgraphTable.getSelectionIndex()); 		    	
 		    	
 				if (dataDialog.open("Edit spatial dynamic declaration",
-						false, "", true, item.getText(0), 
+						false, "", false, "", 
+						true, item.getText(0), 
 						false, "", FunctionDataDialog.dataConditionType.None, "", 
 						false, "", true, item.getText(1), existingUnits)) {
 					
@@ -362,7 +363,7 @@ public class DataWizardPage extends WizardPage {
 		colsTitles.clear();
 		colsTitles.add("Name");
 		colsTitles.add("Unit class");
-		colsTitles.add("Value unit");		
+		colsTitles.add("SI unit");		
 		colsTitles.add("Data condition"); 
 		colsTitles.add("Description");
 		
@@ -393,12 +394,13 @@ public class DataWizardPage extends WizardPage {
 		    	dataDialog = new FunctionDataDialog(getControl().getShell());
 		    	
 				if (dataDialog.open("Add input data declaration",
-						true, "", true, "", true, "", FunctionDataDialog.dataConditionType.ReqUsed, "", false, "", true, "", existingUnits)) {
+						true, "",  false, "", 
+						true, "", true, "", FunctionDataDialog.dataConditionType.ReqUsed, "", false, "", true, "", existingUnits)) {
 
 					TableItem item = new TableItem (idataTable, SWT.NONE);					
 					item.setText (0, dataDialog.getName());
 					item.setText (1, dataDialog.getUnitClass());
-					item.setText (2, dataDialog.getValueUnit());
+					item.setText (2, dataDialog.getSIUnit());
 					item.setText (3, dataDialog.getDataCondition());
 					item.setText (4, dataDialog.getDescription());
 					addToExistingUnits(dataDialog.getUnitClass());
@@ -416,13 +418,14 @@ public class DataWizardPage extends WizardPage {
 				TableItem item = idataTable.getItem(idataTable.getSelectionIndex()); 		    	
 		    	
 				if (dataDialog.open("Edit input data declaration",
-						true, item.getText(0), true, item.getText(1), 
+						true, item.getText(0), false, "", 
+						true, item.getText(1), 
 						true, item.getText(2), FunctionDataDialog.dataConditionType.None, item.getText(3), 
 						false, "", true, item.getText(4), existingUnits)) {
 					
 					item.setText (0, dataDialog.getName());
 					item.setText (1, dataDialog.getUnitClass());
-					item.setText (2, dataDialog.getValueUnit());
+					item.setText (2, dataDialog.getSIUnit());
 					item.setText (3, dataDialog.getDataCondition());
 					item.setText (4, dataDialog.getDescription());
 					addToExistingUnits(dataDialog.getUnitClass());
@@ -444,8 +447,9 @@ public class DataWizardPage extends WizardPage {
 		
 		colsTitles.clear();
 		colsTitles.add("Name");
+		colsTitles.add("Type");		
 		colsTitles.add("Unit class");
-		colsTitles.add("Value unit");		
+		colsTitles.add("SI unit");		
 		colsTitles.add("Data condition");		 
 		colsTitles.add("Time condition");		
 		colsTitles.add("Description");
@@ -476,19 +480,21 @@ public class DataWizardPage extends WizardPage {
 		    	dataDialog = new FunctionDataDialog(getControl().getShell());
 				if (dataDialog.open("Add variable declaration",
 						true, "", true, "", 
+						true, "", 
 						true, "", FunctionDataDialog.dataConditionType.ProdUpReqUsed, "", 
 						true, "", true, "", existingUnits)) {
 
 					TableItem item = new TableItem (varsTable, SWT.NONE);					
 					item.setText (0, dataDialog.getName());
-					item.setText (1, dataDialog.getUnitClass());
-					item.setText (2, dataDialog.getValueUnit());
-					item.setText (3, dataDialog.getDataCondition());
+					item.setText (1, dataDialog.getType());
+					item.setText (2, dataDialog.getUnitClass());
+					item.setText (3, dataDialog.getSIUnit());
+					item.setText (4, dataDialog.getDataCondition());
 					if (dataDialog.getDataCondition().toUpperCase().contains("REQUIRED") ||
 							dataDialog.getDataCondition().toUpperCase().contains("USED")) {
-								item.setText (4, dataDialog.getTimeCondition());
+								item.setText (5, dataDialog.getTimeCondition());
 						}
-					item.setText (5, dataDialog.getDescription());
+					item.setText (6, dataDialog.getDescription());
 					addToExistingUnits(dataDialog.getUnitClass());
 				}				
 				
@@ -504,19 +510,21 @@ public class DataWizardPage extends WizardPage {
 				TableItem item = varsTable.getItem(varsTable.getSelectionIndex());
 				
 				if (dataDialog.open("Edit variable declaration",
-						true, item.getText(0), true, item.getText(1),
-						true, item.getText(2), FunctionDataDialog.dataConditionType.ProdUpReqUsed, item.getText(3), 
-						true, item.getText(4), true, item.getText(5), existingUnits)) {
+						true, item.getText(0), true, item.getText(1), 
+						true, item.getText(2),
+						true, item.getText(3), FunctionDataDialog.dataConditionType.ProdUpReqUsed, item.getText(4), 
+						true, item.getText(5), true, item.getText(6), existingUnits)) {
 
 					item.setText (0, dataDialog.getName());
-					item.setText (1, dataDialog.getUnitClass());
-					item.setText (2, dataDialog.getValueUnit());
-					item.setText (3, dataDialog.getDataCondition());
+					item.setText (1, dataDialog.getType());
+					item.setText (2, dataDialog.getUnitClass());
+					item.setText (3, dataDialog.getSIUnit());
+					item.setText (4, dataDialog.getDataCondition());
 					if (dataDialog.getDataCondition().toUpperCase().contains("REQUIRED") ||
 						dataDialog.getDataCondition().toUpperCase().contains("USED")) {
-							item.setText (4, dataDialog.getTimeCondition());
+							item.setText (5, dataDialog.getTimeCondition());
 					}
-					item.setText (5, dataDialog.getDescription());
+					item.setText (6, dataDialog.getDescription());
 					addToExistingUnits(dataDialog.getUnitClass());
 				
 				}
@@ -563,7 +571,8 @@ public class DataWizardPage extends WizardPage {
 		    	
 		    	
 				if (dataDialog.open("Add events class declaration",
-						false, "", true, "",
+						false, "", false, "", 
+						true, "",
 						false, "", FunctionDataDialog.dataConditionType.None, "",
 						false, "", false, "", existingUnits)) {
 
@@ -585,7 +594,8 @@ public class DataWizardPage extends WizardPage {
 		    	
 		    	dataDialog = new FunctionDataDialog(getControl().getShell());
 				if (dataDialog.open("Edit events class declaration",
-						false, "", true, item.getText(0), 
+						false, "", false, "",
+						true, item.getText(0), 
 						false, "", FunctionDataDialog.dataConditionType.None, "", 
 						false, "", false, "", existingUnits)) {
 
@@ -640,7 +650,8 @@ public class DataWizardPage extends WizardPage {
 		    	dataDialog = new FunctionDataDialog(getControl().getShell());
 		    	
 				if (dataDialog.open("Add extra file declaration",
-						true, "", false, "", 
+						true, "", false, "",
+						false, "", 
 						false, "", FunctionDataDialog.dataConditionType.ReqUsed, "", 
 						false, "", false, "", existingUnits)) {
 					
@@ -661,7 +672,8 @@ public class DataWizardPage extends WizardPage {
 		    	TableItem item 	= filesTable.getItem(filesTable.getSelectionIndex());	    			    	
 		    	
 				if (dataDialog.open("Edit extra file declaration",
-						true, item.getText(0), false, "", 
+						true, item.getText(0), false, "",
+						false, "", 
 						false, "", FunctionDataDialog.dataConditionType.ReqUsed, item.getText(1),
 						false, "", false, "", existingUnits)) {
 					
@@ -728,7 +740,7 @@ public class DataWizardPage extends WizardPage {
 		{
 			FunctionParameter param = new FunctionParameter();
 			param.name = paramsTable.getItem(i).getText(0);
-			param.valueUnit = paramsTable.getItem(i).getText(1);
+			param.SIUnit = paramsTable.getItem(i).getText(1);
 			param.description = paramsTable.getItem(i).getText(2);
 			properties.functionParameters.add(param);
 		}
@@ -739,7 +751,7 @@ public class DataWizardPage extends WizardPage {
 			FunctionInputData idata = new FunctionInputData();
 			idata.name = idataTable.getItem(i).getText(0);
 			idata.unitClass = idataTable.getItem(i).getText(1);
-			idata.valueUnit = idataTable.getItem(i).getText(2);
+			idata.SIUnit = idataTable.getItem(i).getText(2);
 			idata.isRequired = idataTable.getItem(i).getText(3).toUpperCase().contains("REQUIRED");
 			idata.description = idataTable.getItem(i).getText(4);
 			properties.functionInputData.add(idata);
@@ -758,13 +770,14 @@ public class DataWizardPage extends WizardPage {
 		{
 			FunctionVariable var = new FunctionVariable();
 			var.name = varsTable.getItem(i).getText(0);
-			var.unitClass = varsTable.getItem(i).getText(1);
-			var.valueUnit = varsTable.getItem(i).getText(2);
-			var.isProduced = varsTable.getItem(i).getText(3).toUpperCase().contains("PRODUCED");
-			var.isUpdated = varsTable.getItem(i).getText(3).toUpperCase().contains("UPDATED");			
-			var.isRequired = varsTable.getItem(i).getText(3).toUpperCase().contains("REQUIRED");
-			var.isPrevious = varsTable.getItem(i).getText(4).toUpperCase().contains("PREVIOUS");			
-			var.description = varsTable.getItem(i).getText(5);
+			var.type = varsTable.getItem(i).getText(1);
+			var.unitClass = varsTable.getItem(i).getText(2);
+			var.SIUnit = varsTable.getItem(i).getText(3);
+			var.isProduced = varsTable.getItem(i).getText(4).toUpperCase().contains("PRODUCED");
+			var.isUpdated = varsTable.getItem(i).getText(4).toUpperCase().contains("UPDATED");			
+			var.isRequired = varsTable.getItem(i).getText(4).toUpperCase().contains("REQUIRED");
+			var.isPrevious = varsTable.getItem(i).getText(5).toUpperCase().contains("PREVIOUS");			
+			var.description = varsTable.getItem(i).getText(6);
 			properties.functionVariables.add(var);
 		}
 
@@ -784,7 +797,7 @@ public class DataWizardPage extends WizardPage {
 		}
 		
 		
-	}
+	}	
 	
 }
 

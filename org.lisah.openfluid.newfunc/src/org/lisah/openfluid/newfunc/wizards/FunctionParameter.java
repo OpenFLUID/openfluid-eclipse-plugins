@@ -34,12 +34,12 @@ public class FunctionParameter {
 
 	public String name;
 	public String description;
-	public String valueUnit;
+	public String SIUnit;
 
 	public FunctionParameter() {
 		this.description = "";
 		this.name = "";
-		this.valueUnit = "";
+		this.SIUnit = "";
 	}
 
 }

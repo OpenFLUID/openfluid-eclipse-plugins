@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenFLUID simulation function project
-Bundle-SymbolicName: org.lisah.openfluid.newfunc;singleton:=true
+Bundle-Name: OpenFLUID Builder extension project
+Bundle-SymbolicName: org.lisah.openfluid.newbuilderext;singleton:=true
 Bundle-Version: 1.7.1
-Bundle-Activator: org.lisah.openfluid.newfunc.Activator
+Bundle-Activator: org.lisah.openfluid.newbuilderext.Activator
 Bundle-Vendor: lisah
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

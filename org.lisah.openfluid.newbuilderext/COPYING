@@ -1,4 +1,3 @@
-/*
   This program 
   Copyright (c) 2007-2010 INRA-Montpellier SupAgro
 
@@ -25,25 +24,3 @@
   Licensees for Other Usage of This program may use this file in
   accordance with the terms contained in the written agreement between
   You and INRA.
-*/
-
-
-package org.lisah.openfluid.newfunc.wizards;
-
-public class FunctionInputData {
-
-	public String name;
-	public String unitClass;
-	public String description;
-	public String SIUnit;
-	public Boolean isRequired;
-
-	public FunctionInputData() {
-		this.description = "";
-		this.isRequired = true;
-		this.name = "";
-		this.unitClass = "";
-		this.SIUnit = "";
-	}
-
-}

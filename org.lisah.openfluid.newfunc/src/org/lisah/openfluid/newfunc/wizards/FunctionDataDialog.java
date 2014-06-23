@@ -51,12 +51,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+
 public class FunctionDataDialog extends Dialog {
 
 
 	private Text nameText = null;
+	private Combo typeCombo = null;
 	private Combo unitClassCombo = null;
-	private Text valueUnitText = null;
+	private Text SIUnitText = null;
 	private Text descText = null;
 	private Combo dataCondCombo = null;
 	private Combo timeCondCombo = null;
@@ -64,13 +66,25 @@ public class FunctionDataDialog extends Dialog {
 	private Boolean returnIsOK; 
 
 	private String nameStr;
+	private String typeStr;
 	private String unitClassStr;
-	private String valueUnitStr;
+	private String SIUnitStr;
 	private String descStr;
 	private String dataCondStr;
 	private String timeCondStr;
 	
 	public enum dataConditionType {None, ReqUsed, ProdUpReqUsed};
+	
+	 public final static ArrayList<String> valueTypes = new ArrayList<String>();
+     static {
+       valueTypes.add("");
+       valueTypes.add("[boolean]");
+       valueTypes.add("[double]");
+       valueTypes.add("[integer]");
+       valueTypes.add("[map]");
+       valueTypes.add("[matrix]");
+       valueTypes.add("[vector]");
+	 }
 	
 	public FunctionDataDialog(Shell parent) {
 
@@ -87,16 +101,18 @@ public class FunctionDataDialog extends Dialog {
 
 	public Boolean open(String Title, 
 			Boolean isDataName, String dataNameValue,
+			Boolean isDataType, String dataTypeValue,
 			Boolean isDataUnitClass, String dataUnitClassValue,
-			Boolean isDataValueUnit, String dataValueUnitValue,
+			Boolean isDataSIUnit, String dataSIUnitValue,
 			dataConditionType isDataCondition, String dataConditionValue,
 			Boolean isTimeCondition, String timeConditionValue,
 			Boolean isDataDescription, String dataDescriptionValue,  ArrayList<String> existingUnits) {
 
 		returnIsOK = false;
 		nameStr = "";
+		typeStr = "";
 		unitClassStr = "";
-		valueUnitStr = "";
+		SIUnitStr = "";
 		dataCondStr = "";
 		timeCondStr = "";
 		descStr = "";
@@ -105,8 +121,9 @@ public class FunctionDataDialog extends Dialog {
 		shell.setText(Title);		    
 		createContents(shell, 
 				isDataName, dataNameValue,
+				isDataType, dataTypeValue,				
 				isDataUnitClass, dataUnitClassValue,
-				isDataValueUnit, dataValueUnitValue,
+				isDataSIUnit, dataSIUnitValue,
 				isDataCondition, dataConditionValue,
 				isTimeCondition, timeConditionValue,
 				isDataDescription, dataDescriptionValue, existingUnits);
@@ -125,8 +142,9 @@ public class FunctionDataDialog extends Dialog {
 
 	private void createContents(final Shell shell, 
 			Boolean isDataName, String dataNameValue,
+			Boolean isDataType, String dataTypeValue,			
 			Boolean isDataUnitClass, String dataUnitClassValue,
-			Boolean isDataValueUnit, String dataValueUnitValue,
+			Boolean isDataSIUnit, String dataSIUnitValue,
 			dataConditionType isDataCondition, String dataConditionValue,
 			final Boolean isTimeCondition, String timeConditionValue,
 			Boolean isDataDescription, String dataDescriptionValue, ArrayList<String> existingUnits) {
@@ -153,10 +171,27 @@ public class FunctionDataDialog extends Dialog {
 			data = new GridData ();
 			data.horizontalAlignment = GridData.FILL;
 			nameText.setLayoutData(data);       
-
-
 		}
 
+		if (isDataType) {
+			label = new Label(shell, SWT.RIGHT);
+			label.setText("Type:");
+			data = new GridData ();
+			data.horizontalAlignment = GridData.FILL;
+			label.setLayoutData(data);
+
+			typeCombo = new Combo (shell, SWT.NONE);			
+			Iterator<String> i = valueTypes.iterator();
+	        while (i.hasNext()) {
+	            typeCombo.add(i.next());
+	        }
+	        typeCombo.setText(dataTypeValue);	        
+			data = new GridData ();
+			data.horizontalAlignment = GridData.FILL;
+			typeCombo.setLayoutData(data);       
+		}
+		
+		
 		if (isDataUnitClass) {
 			label = new Label(shell, SWT.RIGHT);
 			label.setText("Unit class:");
@@ -175,18 +210,18 @@ public class FunctionDataDialog extends Dialog {
 			unitClassCombo.setLayoutData(data);        	
 		}
 
-		if (isDataValueUnit) {
+		if (isDataSIUnit) {
 			label = new Label(shell, SWT.RIGHT);
-			label.setText("Data unit:");
+			label.setText("SI unit:");
 			data = new GridData ();
 			data.horizontalAlignment = GridData.FILL;
 			label.setLayoutData(data);
 
-			valueUnitText = new Text (shell, SWT.BORDER);
-			valueUnitText.setText(dataValueUnitValue);
+			SIUnitText = new Text (shell, SWT.BORDER);
+			SIUnitText.setText(dataSIUnitValue);
 			data = new GridData ();
 			data.horizontalAlignment = GridData.FILL;
-			valueUnitText.setLayoutData(data);
+			SIUnitText.setLayoutData(data);
 		}
 
 		if (isDataCondition != dataConditionType.None) {
@@ -304,8 +339,9 @@ public class FunctionDataDialog extends Dialog {
 			public void widgetSelected(SelectionEvent e) {										
 				returnIsOK = true;
 				if (nameText != null) nameStr = nameText.getText();
+				if (typeCombo != null) typeStr = typeCombo.getText();				
 				if (unitClassCombo != null) unitClassStr = unitClassCombo.getText();
-				if (valueUnitText != null) valueUnitStr = valueUnitText.getText();
+				if (SIUnitText != null) SIUnitStr = SIUnitText.getText();
 				if (dataCondCombo != null) dataCondStr = dataCondCombo.getText();
 				if (timeCondCombo != null) timeCondStr = timeCondCombo.getText();
 				if (descText != null) descStr = descText.getText();
@@ -361,12 +397,17 @@ public class FunctionDataDialog extends Dialog {
 		return nameStr;		
 	}
 
+	public String getType() {
+		return typeStr;		
+	}
+	
+	
 	public String getUnitClass() {
 		return unitClassStr;		
 	}
 
-	public String getValueUnit() {
-		return valueUnitStr;		
+	public String getSIUnit() {
+		return SIUnitStr;		
 	}
 
 	public String getDescription() {

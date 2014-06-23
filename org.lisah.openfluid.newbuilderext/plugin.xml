@@ -5,15 +5,15 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <category
-            name="OpenFLUID"
-            id="org.lisah.openfluid">
+            id="org.lisah.openfluid"
+            name="OpenFLUID">
       </category>
       <wizard
-            name="Simulation function project"
+            name="Builder extension project"
             icon="icons/openfluid-eclipse.png"
             category="org.lisah.openfluid"
-            class="org.lisah.openfluid.newfunc.wizards.NewFunctionWizard"
-            id="org.lisah.openfluid.newfunc.wizards.SampleNewWizard">
+            class="org.lisah.openfluid.newbuilderext.wizards.NewBuilderextWizard"
+            id="org.lisah.openfluid.newbuilderext.wizards.SampleNewWizard">
       </wizard>
    </extension>
 

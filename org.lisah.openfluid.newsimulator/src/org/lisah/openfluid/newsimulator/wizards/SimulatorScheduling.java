@@ -27,35 +27,27 @@
   You and INRA.
 */
 
-package org.lisah.openfluid.common;
 
-public class OpenFLUIDPluginProperties {
+package org.lisah.openfluid.newsimulator.wizards;
 
+public class SimulatorScheduling {
 	
-	public Boolean isNewProject;
-	public String project;
-	public String container;
-	public String sourcesFilesRoot;
-	public String className;	
-	public String buildSubdir;
-	public String installDir;
-	public Boolean runCMake;
-	public String cmakeCommandPath;
-	public Boolean createBuildSystem;
-
-	public OpenFLUIDPluginProperties() {
-
-		this.buildSubdir = "";
-		this.installDir = "";
-		this.cmakeCommandPath = "";
-		this.createBuildSystem = false;
-		this.runCMake = false;
-		this.className = "";
-		this.isNewProject = false;
-		this.project = "";
-		this.container = "";
-
+	public enum ShedulingType {UNDEFINED, DEFAULT, FIXED, RANGE};
+	
+	public ShedulingType type;
+	public String FixedValue;
+	public String MinValue;
+	public String MaxValue;
+	
+	public SimulatorScheduling() {
+	
+		this.type = ShedulingType.UNDEFINED;
+		this.FixedValue = "0";
+		this.MinValue = "0";
+		this.MaxValue = "0";
 	}
 	
+	
+
 	
 }

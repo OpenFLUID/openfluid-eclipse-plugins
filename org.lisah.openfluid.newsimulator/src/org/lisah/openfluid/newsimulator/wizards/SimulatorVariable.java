@@ -27,35 +27,29 @@
   You and INRA.
 */
 
-package org.lisah.openfluid.common;
 
-public class OpenFLUIDPluginProperties {
+package org.lisah.openfluid.newsimulator.wizards;
 
+public class SimulatorVariable {
+
+	public String name;
+	public String type;
+	public String unitClass;
+	public String description;
+	public String SIUnit;
+	public Boolean isRequired;
+	public Boolean isProduced;
+	public Boolean isUpdated;
 	
-	public Boolean isNewProject;
-	public String project;
-	public String container;
-	public String sourcesFilesRoot;
-	public String className;	
-	public String buildSubdir;
-	public String installDir;
-	public Boolean runCMake;
-	public String cmakeCommandPath;
-	public Boolean createBuildSystem;
-
-	public OpenFLUIDPluginProperties() {
-
-		this.buildSubdir = "";
-		this.installDir = "";
-		this.cmakeCommandPath = "";
-		this.createBuildSystem = false;
-		this.runCMake = false;
-		this.className = "";
-		this.isNewProject = false;
-		this.project = "";
-		this.container = "";
-
+	public SimulatorVariable() {
+		this.description = "";
+		this.isRequired = false;
+		this.isProduced = false;
+		this.isUpdated = false;
+		this.name = "";
+		this.type = "";
+		this.unitClass = "";
+		this.SIUnit = "";
 	}
-	
-	
+
 }

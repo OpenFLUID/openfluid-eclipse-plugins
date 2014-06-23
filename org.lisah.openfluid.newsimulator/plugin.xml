@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="OpenFLUID"
+            id="org.lisah.openfluid">
+      </category>
+      <wizard
+            name="Simulator project"
+            icon="icons/openfluid-eclipse.png"
+            category="org.lisah.openfluid"
+            class="org.lisah.openfluid.newsimulator.wizards.NewSimulatorWizard"
+            id="org.lisah.openfluid.newsimulator.wizards.NewSimulatorWizard">
+      </wizard>
+   </extension>
+
+</plugin>

@@ -3,8 +3,15 @@
 */
 
 
-#include "openfluid-base.h"
-#include "openfluid-core.h"
+/*
+<func2doc>
+
+</func2doc>
+*/
+
+
+#include <openfluid/base.hpp>
+#include <openfluid/core.hpp>
 
 
 // =====================================================================
@@ -23,7 +30,7 @@ BEGIN_SIGNATURE_HOOK
   DECLARE_SIGNATURE_NAME("$$FUNCTIONNAME$$");
   DECLARE_SIGNATURE_DESCRIPTION("$$FUNCTIONDESC$$");
 
-  DECLARE_SIGNATURE_VERSION("1.0");
+  DECLARE_SIGNATURE_VERSION("$$FUNCTIONVERSION$$");
   DECLARE_SIGNATURE_SDKVERSION;
   DECLARE_SIGNATURE_STATUS(openfluid::base::EXPERIMENTAL);
 
@@ -34,6 +41,7 @@ BEGIN_SIGNATURE_HOOK
   DECLARE_SIGNATURE_AUTHOREMAIL("$$FUNCTIONAUTHOREMAIL$$");
 
   $$FUNCTIONDECLARATION_PARAMS$$
+  $$FUNCTIONDECLARATION_SDYN$$
   $$FUNCTIONDECLARATION_IDATA$$
   $$FUNCTIONDECLARATION_VARS$$
   $$FUNCTIONDECLARATION_EVENTS$$
@@ -79,7 +87,7 @@ class $$CLASSNAME$$ : public openfluid::base::PluggableFunction
     // =====================================================================
   
   
-    bool initParams(openfluid::core::FuncParamsMap_t Params)
+    bool initParams(openfluid::core::FuncParamsMap_t /*Params*/)
     {
   
   
@@ -114,7 +122,7 @@ class $$CLASSNAME$$ : public openfluid::base::PluggableFunction
     // =====================================================================
   
   
-    bool initializeRun(const openfluid::base::SimulationInfo* SimInfo)
+    bool initializeRun(const openfluid::base::SimulationInfo* /*SimInfo*/)
     {
   
   
@@ -125,7 +133,7 @@ class $$CLASSNAME$$ : public openfluid::base::PluggableFunction
     // =====================================================================
   
   
-    bool runStep(const openfluid::base::SimulationStatus* SimStatus)
+    bool runStep(const openfluid::base::SimulationStatus* /*SimStatus*/)
     {
   
       return true;
@@ -135,7 +143,7 @@ class $$CLASSNAME$$ : public openfluid::base::PluggableFunction
     // =====================================================================
   
   
-    bool finalizeRun(const openfluid::base::SimulationInfo* SimInfo)
+    bool finalizeRun(const openfluid::base::SimulationInfo* /*SimInfo*/)
     {
   
   

@@ -1,3 +1,33 @@
+/*
+  This program 
+  Copyright (c) 2007-2010 INRA-Montpellier SupAgro
+
+ == GNU General Public License Usage ==
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program  is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with This program.  If not, see <http://www.gnu.org/licenses/>.
+  
+
+ == Other Usage ==
+
+  Other Usage means a use of This program that is inconsistent with
+  the GPL license, and requires a written agreement between You and INRA.
+  Licensees for Other Usage of This program may use this file in
+  accordance with the terms contained in the written agreement between
+  You and INRA.
+*/
+
+
 package org.lisah.openfluid.newfunc.wizards;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,21 +57,25 @@ public class DataWizardPage extends WizardPage {
 	private Table filesTable;	
 	private Table paramsTable;
 	private Table idataTable;
+	private Table sdgraphTable;
 	private Table eventsTable;
 	
 	private Button addVarButton;
 	private Button addFileButton;
 	private Button addParamButton;
+	private Button addSDGraphButton;
 	private Button addIDataButton;
 	private Button addEventButton;
 	private Button editVarButton;
 	private Button editFileButton;
 	private Button editParamButton;
+	private Button editSDGraphButton;	
 	private Button editIDataButton;
 	private Button editEventButton;		
 	private Button rmVarButton;
 	private Button rmFileButton;
 	private Button rmParamButton;
+	private Button rmSDGraphButton;	
 	private Button rmIDataButton;
 	private Button rmEventButton;	
 
@@ -242,7 +276,82 @@ public class DataWizardPage extends WizardPage {
 				paramsTable.remove(paramsTable.getSelectionIndices());				
 			}
 		});
+
 		
+		
+		//=============== Spatial domain graph ===============  		
+				
+		
+		colsTitles.clear();	
+		colsTitles.add("Unit class");
+		colsTitles.add("Description");
+		
+		sdgraphTable = new Table(parent, SWT.MULTI | SWT.BORDER); 
+		addSDGraphButton = new Button(parent,SWT.PUSH);
+		editSDGraphButton= new Button(parent,SWT.PUSH);		
+		rmSDGraphButton = new Button(parent,SWT.PUSH);		
+
+		
+		sdgraphTable.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {					
+				if (sdgraphTable.getSelectionCount() == 1) editSDGraphButton.setEnabled(true);
+				else editSDGraphButton.setEnabled(false);
+				
+				if (sdgraphTable.getSelectionCount() >= 1) rmSDGraphButton.setEnabled(true);
+				else rmSDGraphButton.setEnabled(false);
+					
+			}
+		});
+
+		
+		
+		addTabItem(dataTab, "Spatial dynamic", sdgraphTable, colsTitles, addSDGraphButton, editSDGraphButton, rmSDGraphButton);
+
+		addSDGraphButton.addListener(SWT.Selection,new Listener() {
+			public void handleEvent(Event event) {
+		    	FunctionDataDialog dataDialog;
+		    	dataDialog = new FunctionDataDialog(getControl().getShell());
+		    	
+				if (dataDialog.open("Add spatial dynamic declaration",
+						false, "", true, "", false, "", FunctionDataDialog.dataConditionType.None, "", false, "", true, "", existingUnits)) {
+
+					TableItem item = new TableItem (sdgraphTable, SWT.NONE);					
+					item.setText (0, dataDialog.getUnitClass());
+					item.setText (1, dataDialog.getDescription());
+					addToExistingUnits(dataDialog.getUnitClass());
+				}
+
+			}
+		});
+
+
+		editSDGraphButton.addListener(SWT.Selection,new Listener() {
+			public void handleEvent(Event event) {
+		    	FunctionDataDialog dataDialog;
+		    	dataDialog = new FunctionDataDialog(getControl().getShell());
+
+				TableItem item = sdgraphTable.getItem(sdgraphTable.getSelectionIndex()); 		    	
+		    	
+				if (dataDialog.open("Edit spatial dynamic declaration",
+						false, "", true, item.getText(0), 
+						false, "", FunctionDataDialog.dataConditionType.None, "", 
+						false, "", true, item.getText(1), existingUnits)) {
+					
+					item.setText (0, dataDialog.getUnitClass());
+					item.setText (1, dataDialog.getDescription());
+					addToExistingUnits(dataDialog.getUnitClass());
+					
+				}
+
+			}
+		});
+		
+		
+		rmSDGraphButton.addListener(SWT.Selection,new Listener() {
+			public void handleEvent(Event event) {
+				sdgraphTable.remove(sdgraphTable.getSelectionIndices());				
+			}
+		});
 		
 		
 		
@@ -609,44 +718,6 @@ public class DataWizardPage extends WizardPage {
 		setPageComplete(message == null);
 	}
 
-/*	public String[][] getFuncVars() {
-		
-		String[][] vars = new String[varsTable.getItemCount()][5];
-		
-		for (int i=0;i<varsTable.getItemCount();i++) {
-			vars[i][0] = varsTable.getItem(i).getText(0);
-			vars[i][1] = varsTable.getItem(i).getText(1);
-			vars[i][2] = varsTable.getItem(i).getText(2);
-			vars[i][3] = varsTable.getItem(i).getText(3);
-			vars[i][4] = varsTable.getItem(i).getText(4);			
-		}
-		
-		return vars;
-	}
-	
-
-	public int getFuncVarsCount() {		
-		return varsTable.getItemCount();
-	}
-
-	
-	public String[][] getFuncFiles() {
-		
-		String[][] vars = new String[filesTable.getItemCount()][5];
-		
-		for (int i=0;i<filesTable.getItemCount();i++) {
-			vars[i][0] = filesTable.getItem(i).getText(0);
-			vars[i][1] = filesTable.getItem(i).getText(1);
-		}
-		
-		return vars;
-	}
-	
-
-	public int getFuncFilesCount() {		
-		return filesTable.getItemCount();
-	}
-	*/
 	
 	public void fillFunctionProperties(FunctionProperties properties)
 	{
@@ -673,6 +744,15 @@ public class DataWizardPage extends WizardPage {
 			idata.description = idataTable.getItem(i).getText(4);
 			properties.functionInputData.add(idata);
 		}
+		
+		for (i=0;i<sdgraphTable.getItemCount();i++)
+		{
+			FunctionSpatialDyn sdyn = new FunctionSpatialDyn();
+            sdyn.description = sdgraphTable.getItem(i).getText(0);
+			sdyn.unitClass = sdgraphTable.getItem(i).getText(1);
+			properties.functionSpatialDyn.add(sdyn);
+		}
+		
 		
 		for (i=0;i<varsTable.getItemCount();i++)
 		{

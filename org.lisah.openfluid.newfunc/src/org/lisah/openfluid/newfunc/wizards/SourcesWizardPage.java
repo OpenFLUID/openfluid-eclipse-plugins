@@ -1,3 +1,33 @@
+/*
+  This program 
+  Copyright (c) 2007-2010 INRA-Montpellier SupAgro
+
+ == GNU General Public License Usage ==
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program  is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with This program.  If not, see <http://www.gnu.org/licenses/>.
+  
+
+ == Other Usage ==
+
+  Other Usage means a use of This program that is inconsistent with
+  the GPL license, and requires a written agreement between You and INRA.
+  Licensees for Other Usage of This program may use this file in
+  accordance with the terms contained in the written agreement between
+  You and INRA.
+*/
+
+
 package org.lisah.openfluid.newfunc.wizards;
 
 
@@ -34,7 +64,7 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 public class SourcesWizardPage extends WizardPage {
 	private Text containerText;
 	private Text fileText;
-	private Text installText;
+	
 	private Button buildCheck;
 	private Group sourcesGroup;
 	private Group buildGroup;
@@ -48,6 +78,7 @@ public class SourcesWizardPage extends WizardPage {
 	private ISelection selection;
 	
 	private Label installLabel;
+	private Label installTextLabel;	
 	private Label buildSystemLabel;
 	
 
@@ -235,22 +266,22 @@ public class SourcesWizardPage extends WizardPage {
 		data.horizontalAlignment = GridData.FILL;
 		installLabel.setLayoutData (data);
 		
-		installText = new Text(buildGroup, SWT.BORDER);
+		installTextLabel = new Label(buildGroup, SWT.LEFT);
 		
-		installText.setText("");
+		installTextLabel.setText("(not determined)");
 		
 		if (System.getProperty("os.name").equals("Linux")) {
-	        installText.setText("$(HOME)" + System.getProperty("file.separator") +
+	        installTextLabel.setText(System.getProperty("user.home") + System.getProperty("file.separator") +
 		                        ".openfluid" + System.getProperty("file.separator") + 
-		                        "engine" + System.getProperty("file.separator") + "functions");
+		                        "functions");
 			
 		}
 
 		if (System.getProperty("os.name").startsWith("Windows")) {
-	        installText.setText(System.getProperty("user.home") + System.getProperty("file.separator") +
+	        installTextLabel.setText(System.getenv("APPDATA") + System.getProperty("file.separator") +
 	        		            "Application Data" + System.getProperty("file.separator") +
 		                        "openfluid" + System.getProperty("file.separator") + 
-		                        "engine" + System.getProperty("file.separator") + "plugs");
+		                        "functions");
 			
 		}
 
@@ -259,12 +290,8 @@ public class SourcesWizardPage extends WizardPage {
 		data.horizontalAlignment = GridData.FILL;
 //		data.horizontalSpan = 2;
 		data.grabExcessHorizontalSpace = true;
-		installText.setLayoutData (data);
-		installText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				dialogChanged();
-			}
-		});
+		installTextLabel.setLayoutData (data);
+
 
 		
 
@@ -362,13 +389,8 @@ public class SourcesWizardPage extends WizardPage {
 		buildGroup.setEnabled(buildCheck.getSelection());
 		buildSystemLabel.setEnabled(buildCheck.getSelection());
 		buildSystemCombo.setEnabled(buildCheck.getSelection());	
-		installText.setEnabled(buildCheck.getSelection());
+		installTextLabel.setEnabled(buildCheck.getSelection());
 		installLabel.setEnabled(buildCheck.getSelection());
-		
-		if (buildCheck.getSelection() && getInstallDir().length() == 0) {
-			updateStatus("Install directory must be specified");
-			return;
-		}
 		
 		updateStatus(null);
 	}
@@ -396,8 +418,8 @@ public class SourcesWizardPage extends WizardPage {
 	}	
 
 	public String getInstallDir() {
-		return installText.getText();
-	}	
+		return installTextLabel.getText();
+	}
 	
 	public void fillFunctionProperties(FunctionProperties properties)
 	{
@@ -408,10 +430,10 @@ public class SourcesWizardPage extends WizardPage {
 		
 		if (buildCheck.getSelection()) {
 			properties.buildSystem = buildSystemCombo.getText();
-			properties.installDir = installText.getText();
 			if (properties.buildSystem.toUpperCase().contains("CMAKE")) {
 				properties.buildFolder = "_build";
 			}
+			properties.installDir = installTextLabel.getText();
 		}
 	}	
 	

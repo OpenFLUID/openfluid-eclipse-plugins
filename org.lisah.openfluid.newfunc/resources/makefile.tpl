@@ -1,8 +1,8 @@
 # makefile for mhydas function
 
 CPP = g++
-OFELIBS = $(shell ofelib-config --libs) -L/usr/lib
-OFEFLAGS = $(shell ofelib-config --cflags)
+OFELIBS = $(shell pkg-config openfluid --libs) -L/usr/lib
+OFEFLAGS = $(shell pkg-config openfluid --cflags)
 BINFILE = $$FUNCTIONID$$
 SRCFILESROOT = $$ROOTFILENAME$$
 

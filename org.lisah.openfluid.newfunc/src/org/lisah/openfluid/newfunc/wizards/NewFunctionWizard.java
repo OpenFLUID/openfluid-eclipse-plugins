@@ -1,3 +1,33 @@
+/*
+  This program 
+  Copyright (c) 2007-2010 INRA-Montpellier SupAgro
+
+ == GNU General Public License Usage ==
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program  is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with This program.  If not, see <http://www.gnu.org/licenses/>.
+  
+
+ == Other Usage ==
+
+  Other Usage means a use of This program that is inconsistent with
+  the GPL license, and requires a written agreement between You and INRA.
+  Licensees for Other Usage of This program may use this file in
+  accordance with the terms contained in the written agreement between
+  You and INRA.
+*/
+
+
 package org.lisah.openfluid.newfunc.wizards;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -142,7 +172,7 @@ public class NewFunctionWizard extends Wizard implements INewWizard {
 			cmakeconfFile = container.getFile(new Path("CMake.in.config"));
 			if (funcProperties.buildFolder != "") {
 				IFolder buildFolder = container.getFolder(new Path(funcProperties.buildFolder));
-				buildFolder.create(true, true, null);				
+				if (!buildFolder.exists()) buildFolder.create(true, true, null);				
 			}
 		}
 			
@@ -275,6 +305,7 @@ public class NewFunctionWizard extends Wizard implements INewWizard {
 		String tplContent = Str;
 		
 		String funcDeclParams = "";
+		String funcDeclSDyn = "";
 		String funcDeclIData = "";
 		String funcDeclVars = "";
 		String funcDeclEvents = "";
@@ -282,6 +313,7 @@ public class NewFunctionWizard extends Wizard implements INewWizard {
 
 		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONID\\$\\$", funcProperties.functionID);
 		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONNAME\\$\\$", funcProperties.functionName);
+		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONVERSION\\$\\$", funcProperties.functionVersion);		
 		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONDESC\\$\\$", funcProperties.functionDescription);
 		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONAUTHOR\\$\\$", funcProperties.functionAuthor);
 		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONAUTHOREMAIL\\$\\$", funcProperties.functionAuthorEmail);
@@ -306,6 +338,27 @@ public class NewFunctionWizard extends Wizard implements INewWizard {
 								 param.valueUnit + "\")\n";
 			}
 		}
+
+		
+		Iterator<FunctionSpatialDyn> itSDyn = null;
+		
+		if (funcProperties.functionSpatialDyn.size() > 0) {
+			itSDyn = funcProperties.functionSpatialDyn.iterator();			
+			funcDeclSDyn = "\n// Spatial domain dynamic\n";
+			funcDeclSDyn = funcDeclSDyn + "  DECLARE_UPDATED_UNITSGRAPH(\"\")\n";			
+			FunctionSpatialDyn sdyn = null;
+			
+			while (itSDyn.hasNext()) {
+				
+				sdyn = itSDyn.next();
+				
+				funcDeclSDyn = funcDeclSDyn + "  DECLARE_UPDATED_UNITSCLASS(\"";
+				
+				funcDeclSDyn = funcDeclSDyn + sdyn.unitClass + "\",\"" +
+											  sdyn.description + "\")\n";
+			}
+		}
+		
 		
 
 		Iterator<FunctionInputData> itIData = null;
@@ -415,7 +468,8 @@ public class NewFunctionWizard extends Wizard implements INewWizard {
 		
 		
 		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONDECLARATION_PARAMS\\$\\$", funcDeclParams);
-		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONDECLARATION_IDATA\\$\\$", funcDeclIData);
+		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONDECLARATION_SDYN\\$\\$", funcDeclSDyn);
+		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONDECLARATION_IDATA\\$\\$", funcDeclIData);		
 		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONDECLARATION_VARS\\$\\$", funcDeclVars);
 		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONDECLARATION_EVENTS\\$\\$", funcDeclEvents);
 		tplContent = tplContent.replaceAll("\\$\\$FUNCTIONDECLARATION_FILES\\$\\$", funcDeclFiles);

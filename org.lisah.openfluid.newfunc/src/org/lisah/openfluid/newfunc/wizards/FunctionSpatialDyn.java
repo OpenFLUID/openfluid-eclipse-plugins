@@ -30,14 +30,14 @@
 
 package org.lisah.openfluid.newfunc.wizards;
 
-public class FunctionExtraFile {
+public class FunctionSpatialDyn {
 
-	public String name;
-	public Boolean isRequired;
+	public String unitClass;
+	public String description;
 
-	public FunctionExtraFile() {
-		this.isRequired = true;
-		this.name = "";
+	public FunctionSpatialDyn() {
+		this.description = "";
+		this.unitClass = "";
 	}
 
 }

@@ -1,4 +1,36 @@
+/*
+  This program 
+  Copyright (c) 2007-2010 INRA-Montpellier SupAgro
+
+ == GNU General Public License Usage ==
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program  is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with This program.  If not, see <http://www.gnu.org/licenses/>.
+  
+
+ == Other Usage ==
+
+  Other Usage means a use of This program that is inconsistent with
+  the GPL license, and requires a written agreement between You and INRA.
+  Licensees for Other Usage of This program may use this file in
+  accordance with the terms contained in the written agreement between
+  You and INRA.
+*/
+
+
 package org.lisah.openfluid.newfunc.wizards;
+import java.text.SimpleDateFormat;
+
 import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.jface.wizard.WizardPage;
@@ -18,6 +50,7 @@ public class InfosWizardPage extends WizardPage {
 	private Text funcDescText;
 	private Text funcIDText;
 	private Text funcNameText;
+	private Text funcVersionText;
 	private Text funcDomainText;	
 	private Text funcAuthorsText;
 	private Text funcEmailsText;
@@ -70,7 +103,6 @@ public class InfosWizardPage extends WizardPage {
 				dialogChanged();
 			}
 		});
-		funcIDText.setFocus();
 		
 		// function name		
 		label = new Label(container, SWT.RIGHT);
@@ -85,6 +117,33 @@ public class InfosWizardPage extends WizardPage {
 		data.horizontalAlignment = GridData.FILL;		
 		data.horizontalSpan = 2;
 		funcNameText.setLayoutData (data);
+		
+		// function version
+		label = new Label(container, SWT.RIGHT);
+		label.setText("Function version:");
+		data = new GridData ();
+		data.horizontalAlignment = GridData.FILL;
+		label.setLayoutData (data);
+
+		// determine the version number to propose 
+		java.util.Date currentDate = new java.util.Date();
+		java.util.Calendar calendar = java.util.Calendar.getInstance();
+		calendar.setTime(currentDate);
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("yy.MM");
+		if ((calendar.get(java.util.Calendar.YEAR) % 100 < 10)) {
+			dateFormatter = new SimpleDateFormat("y.MM");
+		} 
+		else {
+			dateFormatter = new SimpleDateFormat("yy.MM");
+		}			
+			
+		funcVersionText = new Text(container, SWT.BORDER | SWT.SINGLE);
+		funcVersionText.setText(dateFormatter.format(currentDate.getTime()));
+		//data = new GridData(GridData.FILL_HORIZONTAL);
+		data = new GridData ();
+		data.horizontalAlignment = GridData.FILL;		
+		data.horizontalSpan = 2;
+		funcVersionText.setLayoutData (data);		
 
 		// function domain		
 		label = new Label(container, SWT.RIGHT);
@@ -155,27 +214,28 @@ public class InfosWizardPage extends WizardPage {
 		container.pack ();
 		
 		
-		initialize();
 		dialogChanged();
 		setControl(container);
+
+		
 	}
 
-	/**
-	 * Tests if the current workbench selection is a suitable container to use.
-	 */
+	
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		
+		// Set the initial focus
+		if (visible) {
+			getShell().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					funcIDText.setFocus();
+				}
+			});
 
-	private void initialize() {
+		}
 	}
 
-	/**
-	 * Uses the standard container selection dialog to choose the new value for
-	 * the container field.
-	 */
-
-
-	/**
-	 * Ensures that both text fields are set.
-	 */
+	
 
 	private void dialogChanged() {
 		if (getFuncID().length() == 0) {
@@ -200,6 +260,10 @@ public class InfosWizardPage extends WizardPage {
 		return funcNameText.getText();
 	}	
 
+	public String getFuncVersion() {
+		return funcVersionText.getText();
+	}		
+	
 	public String getFuncDomain() {
 		return funcDomainText.getText();
 	}	
@@ -221,6 +285,7 @@ public class InfosWizardPage extends WizardPage {
 	{
 		properties.functionID = funcIDText.getText();
 		properties.functionName = funcNameText.getText();
+		properties.functionVersion = funcVersionText.getText();
 		properties.functionDomain = funcDomainText.getText();
 		properties.functionDescription = funcDescText.getText();
 		properties.functionAuthor = funcAuthorsText.getText();

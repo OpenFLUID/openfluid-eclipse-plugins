@@ -3,6 +3,13 @@
 */
 
 
+/*
+<func2doc>
+
+</func2doc>
+*/
+
+
 #include "$$ROOTFILENAME$$.h"
 
 
@@ -22,7 +29,7 @@ BEGIN_SIGNATURE_HOOK
   DECLARE_SIGNATURE_NAME("$$FUNCTIONNAME$$");
   DECLARE_SIGNATURE_DESCRIPTION("$$FUNCTIONDESC$$");
 
-  DECLARE_SIGNATURE_VERSION("1.0");
+  DECLARE_SIGNATURE_VERSION("$$FUNCTIONVERSION$$");
   DECLARE_SIGNATURE_SDKVERSION;
   DECLARE_SIGNATURE_STATUS(openfluid::base::EXPERIMENTAL);
 
@@ -33,6 +40,7 @@ BEGIN_SIGNATURE_HOOK
   DECLARE_SIGNATURE_AUTHOREMAIL("$$FUNCTIONAUTHOREMAIL$$");
 
   $$FUNCTIONDECLARATION_PARAMS$$
+  $$FUNCTIONDECLARATION_SDYN$$
   $$FUNCTIONDECLARATION_IDATA$$
   $$FUNCTIONDECLARATION_VARS$$
   $$FUNCTIONDECLARATION_EVENTS$$
@@ -68,7 +76,7 @@ $$CLASSNAME$$::~$$CLASSNAME$$()
 // =====================================================================
 
 
-bool $$CLASSNAME$$::initParams(openfluid::core::FuncParamsMap_t Params)
+bool $$CLASSNAME$$::initParams(openfluid::core::FuncParamsMap_t /*Params*/)
 {
 
 
@@ -103,7 +111,7 @@ bool $$CLASSNAME$$::checkConsistency()
 // =====================================================================
 
 
-bool $$CLASSNAME$$::initializeRun(const openfluid::base::SimulationInfo* SimInfo)
+bool $$CLASSNAME$$::initializeRun(const openfluid::base::SimulationInfo* /*SimInfo*/)
 {
 
 
@@ -114,7 +122,7 @@ bool $$CLASSNAME$$::initializeRun(const openfluid::base::SimulationInfo* SimInfo
 // =====================================================================
 
 
-bool $$CLASSNAME$$::runStep(const openfluid::base::SimulationStatus* SimStatus)
+bool $$CLASSNAME$$::runStep(const openfluid::base::SimulationStatus* /*SimStatus*/)
 {
 
   return true;
@@ -124,7 +132,7 @@ bool $$CLASSNAME$$::runStep(const openfluid::base::SimulationStatus* SimStatus)
 // =====================================================================
 
 
-bool $$CLASSNAME$$::finalizeRun(const openfluid::base::SimulationInfo* SimInfo)
+bool $$CLASSNAME$$::finalizeRun(const openfluid::base::SimulationInfo* /*SimInfo*/)
 {
 
 

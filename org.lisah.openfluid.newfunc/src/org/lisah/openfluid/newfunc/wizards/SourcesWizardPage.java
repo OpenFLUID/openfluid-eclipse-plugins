@@ -152,7 +152,7 @@ public class SourcesWizardPage extends WizardPage {
 		filesCombo = new Combo(sourcesGroup, SWT.READ_ONLY);
 		filesCombo.add(".cpp and .h files");
 		filesCombo.add("single .cpp file");
-		filesCombo.select(0);
+		filesCombo.select(1);
 		data = new GridData ();
 //		data.horizontalAlignment = GridData.FILL;
 //		data.grabExcessHorizontalSpace = true;	
@@ -222,7 +222,7 @@ public class SourcesWizardPage extends WizardPage {
 		buildSystemCombo = new Combo(buildGroup, SWT.READ_ONLY);
 		buildSystemCombo.add("GNU Makefile");
 		buildSystemCombo.add("CMake 2.6+");
-		buildSystemCombo.select(0);
+		buildSystemCombo.select(1);
 		data = new GridData ();
 //		data.horizontalAlignment = GridData.FILL;
 //		data.grabExcessHorizontalSpace = true;	

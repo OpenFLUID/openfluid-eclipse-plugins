@@ -1,10 +1,8 @@
 # makefile for mhydas function
 
 CPP = g++
-WXLIBS = $(shell wx-config --libs base)
-WXFLAGS = $(shell wx-config --cxxflags base)
-MHYDASDKLIBS = $(shell ofelib-config --libs) -L/usr/lib
-MHYDASDKFLAGS = $(shell ofelib-config --cflags)
+OFELIBS = $(shell ofelib-config --libs) -L/usr/lib
+OFEFLAGS = $(shell ofelib-config --cflags)
 BINFILE = $$FUNCTIONID$$
 SRCFILESROOT = $$ROOTFILENAME$$
 
@@ -33,8 +31,8 @@ endif
 
 
 all:
-	$(CPP) -c $(SRCFILESROOT).cpp -o $(OBJPATH)/$(SRCFILESROOT).o -fPIC $(WXFLAGS) $(MHYDASDKFLAGS)
-	$(CPP) $(OBJPATH)/$(SRCFILESROOT).o $(WXLIBS) $(MHYDASDKLIBS) -o $(BINPATH)/$(BINFILE).$(PLUGEXT) -shared $(LDFLAGS)
+	$(CPP) -c $(SRCFILESROOT).cpp -o $(OBJPATH)/$(SRCFILESROOT).o -fPIC $(OFEFLAGS)
+	$(CPP) $(OBJPATH)/$(SRCFILESROOT).o $(OFELIBS) -o $(BINPATH)/$(BINFILE).$(PLUGEXT) -shared $(LDFLAGS)
 
 
 clean:

@@ -39,24 +39,31 @@ public class SelectWizardPage extends WizardPage {
 	private Button selectNoneButton;	
 	
     private final OpenFLUIDPreferences ofPrefs;
-	private final LocalWorkspaceInfos localWI;
+
 	private RemoteWaresHub remoteWH;
 
+
+	// =====================================================================
+	// =====================================================================	
+		
 	
 	public SelectWizardPage(ISelection selection,
 			final OpenFLUIDPreferences ofp,
-			final LocalWorkspaceInfos lwi, RemoteWaresHub rwh) {
+			RemoteWaresHub rwh) {
 		super("");
 
 		setTitle("");
 		setDescription("Select OpenFLUID wares to import");
 		
 		ofPrefs = ofp;
-		localWI = lwi;
 		remoteWH = rwh;
 	}
 
 
+	// =====================================================================
+	// =====================================================================	
+	
+	
 	public void createControl(Composite parent) {
     	Label label;
     	GridData data;
@@ -65,26 +72,26 @@ public class SelectWizardPage extends WizardPage {
     	
     	GridLayout layout = new GridLayout();		
 		mainComposite.setLayout(layout);
-		layout.verticalSpacing = 20;
+		layout.verticalSpacing = 10;
 		layout.numColumns = 2;
 		layout.makeColumnsEqualWidth = false;
 		
 		label = new Label(mainComposite, SWT.RIGHT);
 		label.setText("Connected to:");
-		data = new GridData ();
+		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		label.setLayoutData (data);				
     	
 		URLLabel = new Label(mainComposite, SWT.LEFT);
 		URLLabel.setText("");
-		data = new GridData ();
+		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
-		data.grabExcessHorizontalSpace = true;	
+		data.grabExcessHorizontalSpace = true;
 		URLLabel.setLayoutData (data);
 		
 		label = new Label(mainComposite, SWT.RIGHT);
 		label.setText("Type:");
-		data = new GridData ();
+		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		label.setLayoutData (data);				
     
@@ -102,7 +109,7 @@ public class SelectWizardPage extends WizardPage {
 		
 		
 		waresTable = new Table(mainComposite,
-				SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+				SWT.CHECK | SWT.BORDER | SWT.MULTI);
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.verticalAlignment = GridData.FILL;
@@ -126,19 +133,19 @@ public class SelectWizardPage extends WizardPage {
 		});
 		
 		Composite buttonsComposite = new Composite(mainComposite, SWT.NULL);
+		GridLayout buttonsLayout = new GridLayout();		
+		buttonsComposite.setLayout(buttonsLayout);
+		buttonsLayout.verticalSpacing = 5;
+		buttonsLayout.numColumns = 2;
+		buttonsLayout.makeColumnsEqualWidth = false;
+		
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.grabExcessHorizontalSpace = false;
 		data.grabExcessVerticalSpace = false;
 		data.horizontalSpan = 2;
 		buttonsComposite.setLayoutData(data);
-		
-		GridLayout buttonsLayout = new GridLayout();		
-		buttonsComposite.setLayout(buttonsLayout);
-		buttonsLayout.verticalSpacing = 10;
-		buttonsLayout.numColumns = 2;
-		//layout.makeColumnsEqualWidth = false;
-		
+				
 		selectAllButton = new Button(buttonsComposite, SWT.PUSH);
 		selectAllButton.setText("Select all");
 		data = new GridData ();
@@ -182,10 +189,16 @@ public class SelectWizardPage extends WizardPage {
 		}); 
 
 		
+		mainComposite.pack();
+		
     	dialogChanged();
     	
 		setControl(mainComposite);		
 	}
+	
+
+	// =====================================================================
+	// =====================================================================	
 	
 	
 	private void dialogChanged() {
@@ -199,12 +212,19 @@ public class SelectWizardPage extends WizardPage {
 			
 	}
 	
+
+	// =====================================================================
+	// =====================================================================	
+	
 	
 	private void updateStatus(String message) {
 		setErrorMessage(message);
 		setPageComplete(message == null);
 	}
 	
+	
+	// =====================================================================
+	// =====================================================================	
 	
 	
 	public void setVisible(boolean visible) {
@@ -216,6 +236,10 @@ public class SelectWizardPage extends WizardPage {
 		}
 	}
 
+
+	// =====================================================================
+	// =====================================================================	
+	
 	
 	private boolean isWareExists(String wareID) {
 		IWorkspaceRoot wRoot = ResourcesPlugin.getWorkspace().getRoot();
@@ -225,12 +249,13 @@ public class SelectWizardPage extends WizardPage {
 		String wareLocalPath = ofPrefs.getWaresTypeDevPath(getActiveWareType())+"/"+wareID;
         File fsPath = new File(wareLocalPath)	;	
 		
-		System.out.println(wareID+": "+ewsPath+ "  "+wRoot.exists(ewsPath));
-		
 		return wRoot.exists(epPath) || fsPath.exists();
-
 	}
+
 	
+	// =====================================================================
+	// =====================================================================	
+
 	
 	private void populateWaresTable(String TypeStr) {
 				
@@ -243,7 +268,7 @@ public class SelectWizardPage extends WizardPage {
 			item.setText(1,w.ID);
 			item.setText(2,w.Description);
 			if (isWareExists(w.ID)) {
-				// TODO do better!
+				// TODO find a better way to show already existing wares
 				item.setGrayed(true);
 			}
 		}
@@ -253,6 +278,10 @@ public class SelectWizardPage extends WizardPage {
 		}	
 	}
 	
+
+	// =====================================================================
+	// =====================================================================	
+
 	
 	void updateWaresHubInfos() {
 		
@@ -260,7 +289,7 @@ public class SelectWizardPage extends WizardPage {
 	    wareTypeCombo.removeAll();
 	    waresTable.removeAll();
 
-		remoteWH.setURL(localWI.requestedRemoteURL);
+		remoteWH.setURL(ofPrefs.getRequestedRemoteURL());
 
 		boolean connected = false;
 		
@@ -285,9 +314,11 @@ public class SelectWizardPage extends WizardPage {
 		
 		if (connected) {
 			
+			    ofPrefs.save();
+			
 				final HashMap<String, ArrayList<WareData>> wares = remoteWH.getAvailableWares();
 				
-				URLLabel.setText(localWI.requestedRemoteURL);
+				URLLabel.setText(ofPrefs.getRequestedRemoteURL());
 				
 			    for (String t: wares.keySet()) {
 				  wareTypeCombo.add(t);
@@ -300,31 +331,45 @@ public class SelectWizardPage extends WizardPage {
 			    	
 			} else {
 				MessageDialog.openError(getShell(), "Error", 
-						remoteWH.getErrorMsg() + "\n" + localWI.requestedRemoteURL);
+						remoteWH.getErrorMsg() + "\n" + ofPrefs.getRequestedRemoteURL());
 			}
 		
 	}
+
 	
+	// =====================================================================
+	// =====================================================================	
+
 	
 	public String getActiveWareType() {
 		return wareTypeCombo.getText();
 	}
-	
 
+	
+	// =====================================================================
+	// =====================================================================	
+
+	
 	public ArrayList<String> getCheckedWaresForType() {
 		ArrayList<String> checkedWares = new ArrayList<String>();
 		
 		final TableItem [] items = waresTable.getItems();
 		
 		for (int i = 0; i < items.length; ++i) {
-			if (items[i].getChecked()) {
-				checkedWares.add(items[i].getText(1));
+			String wareID = items[i].getText(1);
+						
+			if (items[i].getChecked() && !isWareExists(wareID)) {
+				checkedWares.add(wareID);
 			}
 		}
 		
 		return checkedWares;
 	}
+
 	
+	// =====================================================================
+	// =====================================================================	
+
 	
 	public boolean isAnyWareChecked() {
 		return !getCheckedWaresForType().isEmpty();

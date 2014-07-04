@@ -36,21 +36,27 @@ public class ConfigWizardPage extends WizardPage {
 	private Button browseButton;
 
 	private OpenFLUIDPreferences ofPrefs;
-	private LocalWorkspaceInfos localWI;
 	
+	
+	// =====================================================================
+	// =====================================================================
+
 	
 	public ConfigWizardPage(ISelection selection, 
-			OpenFLUIDPreferences ofp, LocalWorkspaceInfos lwi) {
+			OpenFLUIDPreferences ofp) {
 		super("");
 		
 		setTitle("");
 		setDescription("Prepare to import OpenFLUID wares from a remote WaresHub");	
 		
 		ofPrefs = ofp;
-		localWI = lwi;
 	}
 
 
+	// =====================================================================
+	// =====================================================================
+
+	
 	public void createControl(Composite parent) {
     	
 		GridData data;
@@ -90,7 +96,7 @@ public class ConfigWizardPage extends WizardPage {
 		URLText.setLayoutData(data);		
 		URLText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				localWI.requestedRemoteURL = URLText.getText();
+				ofPrefs.setRequestedRemoteURL(URLText.getText());
 				dialogChanged();
 			}
 		});
@@ -109,7 +115,7 @@ public class ConfigWizardPage extends WizardPage {
 		usernameText.setLayoutData(data);
 		usernameText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				localWI.userName = usernameText.getText();				
+				ofPrefs.setUserName(usernameText.getText());				
 				dialogChanged();
 			}
 		});
@@ -128,7 +134,7 @@ public class ConfigWizardPage extends WizardPage {
 		passwordText.setLayoutData(data);
 		passwordText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				localWI.userPassword = passwordText.getText();
+				ofPrefs.setUserPassword(passwordText.getText());
 				dialogChanged();
 			}
 		});
@@ -224,6 +230,10 @@ public class ConfigWizardPage extends WizardPage {
 		setControl(mainComposite);
 	}
 	
+
+	// =====================================================================
+	// =====================================================================
+
 	
 	private void handleBrowse() {
 		
@@ -242,8 +252,13 @@ public class ConfigWizardPage extends WizardPage {
 	}
 	
 	
+	// =====================================================================
+	// =====================================================================
+	
+	
 	private void initialize() {
-		usernameText.setText(System.getProperty("user.name"));
+		URLText.setText(ofPrefs.getRequestedRemoteURL());		
+		usernameText.setText(ofPrefs.getUserName());
 		
 		localPathText.setText(ofPrefs.getWorkspacePath());
 		localSimsPathLabel.setText(ofPrefs.getWaresTypeDevPath("simulators"));
@@ -251,6 +266,9 @@ public class ConfigWizardPage extends WizardPage {
 		localBextsPathLabel.setText(ofPrefs.getWaresTypeDevPath("builderexts"));
 	}
 	
+	
+	// =====================================================================
+	// =====================================================================	
 	
 	
 	private void dialogChanged() {
@@ -277,6 +295,10 @@ public class ConfigWizardPage extends WizardPage {
 		updateStatus(null);
 	}
 	
+	
+	// =====================================================================
+	// =====================================================================
+
 	
 	private void updateStatus(String message) {
 		setErrorMessage(message);

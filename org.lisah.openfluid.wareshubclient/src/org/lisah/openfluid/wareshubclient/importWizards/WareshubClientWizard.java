@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -36,8 +34,12 @@ public class WareshubClientWizard extends Wizard implements IImportWizard {
 	SelectWizardPage selectPage;
 
 	OpenFLUIDPreferences ofPrefs;
-	LocalWorkspaceInfos localWI;
 	RemoteWaresHub remoteWH;
+	
+	
+	// =====================================================================
+	// =====================================================================	
+
 	
 	public WareshubClientWizard() {
 		super();
@@ -45,44 +47,50 @@ public class WareshubClientWizard extends Wizard implements IImportWizard {
 		setNeedsProgressMonitor(true);
 	}
 
+
+	// =====================================================================
+	// =====================================================================	
+
 	
-	/* (non-Javadoc)
-     * @see org.eclipse.jface.wizard.IWizard#addPages()
-     */
     public void addPages() {
     	
     	ofPrefs = new OpenFLUIDPreferences();
-    	localWI = new LocalWorkspaceInfos();
     	remoteWH = new RemoteWaresHub();
     	
-        configPage = new ConfigWizardPage(this.selection,ofPrefs,localWI);
-        selectPage = new SelectWizardPage(this.selection,ofPrefs,localWI,remoteWH);
+        configPage = new ConfigWizardPage(this.selection,ofPrefs);
+        selectPage = new SelectWizardPage(this.selection,ofPrefs,remoteWH);
 
         addPage(configPage);
         addPage(selectPage);  
         
     }
 
+
+	// =====================================================================
+	// =====================================================================	
+    
+    
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.selection = selection;
+		
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
-	 */
+
+	// =====================================================================
+	// =====================================================================	
+
+
 	public boolean performFinish() {
 	
 		final String waresType = selectPage.getActiveWareType();
 		final ArrayList<String> waresList = selectPage.getCheckedWaresForType();
-		
-		System.out.println("================");
-		System.out.println(waresType);
-		
+				
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
+				try {				 
+					monitor.beginTask("Importing "+waresType+"...",waresList.size());
+					
 					for (String w: waresList) {
 						doFinish(waresType,w,monitor);
 					}
@@ -106,10 +114,12 @@ public class WareshubClientWizard extends Wizard implements IImportWizard {
 			return false;
 		}
 
-		
-        return true;
+		return true;
 	}
 	
+
+	// =====================================================================
+	// =====================================================================	
 	
 	
 	private void doFinish(String wareType,String wareID,IProgressMonitor monitor)
@@ -117,18 +127,19 @@ public class WareshubClientWizard extends Wizard implements IImportWizard {
 			
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
-	        IProject project = null;
+	        @SuppressWarnings("unused")
+			IProject project = null;
 	        
 	        String wareLocalPath = ofPrefs.getWaresTypeDevPath(wareType)+"/"+wareID;
 	        
 		    String gitURL = remoteWH.getAvailableInfos().get("wares").asObject()
 		    		.get(wareType).asObject().get(wareID).asObject().get("git-url").asString();
 		
-			System.out.println("Cloning "+wareID);	
-  			  System.out.println("  git clone "+gitURL);
+		    
+			monitor.setTaskName("Cloning "+wareID);
   			  
   			CredentialsProvider cp = 
-  					new UsernamePasswordCredentialsProvider(localWI.userName, localWI.userPassword);  
+  					new UsernamePasswordCredentialsProvider(ofPrefs.getUserName(), ofPrefs.getUserPassword());  
   			  
   			try {
 				Git.cloneRepository()
@@ -136,20 +147,20 @@ public class WareshubClientWizard extends Wizard implements IImportWizard {
 					.setURI(gitURL)
 					.setDirectory(new File(wareLocalPath))
 					.call();
+				
+				monitor.setTaskName("Creating project for "+wareID);
+				
+				project = OpenFLUIDProjectFactory.createProject(workspace,wareID,wareLocalPath);
+				
 			} catch (InvalidRemoteException e) {
 				e.printStackTrace();
 			} catch (TransportException e) {
 				e.printStackTrace();
 			} catch (GitAPIException e) {
 				e.printStackTrace();
-			}
-  			  
-			System.out.println("Creating project "+wareID);
+			}  			  
 			
-			project = OpenFLUIDProjectFactory.createProject(workspace,wareID,wareLocalPath);
-			
-			System.out.println();
+			monitor.worked(1);
 	}
-
 
 }

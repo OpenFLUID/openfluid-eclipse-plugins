@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension point="org.eclipse.ui.importWizards">
+      <category name="OpenFLUID" id="org.lisah.openfluid">
+      </category>
+      <wizard
+            name="Import wares from an OpenFLUID-WaresHub"
+            icon="icons/openfluid-eclipse.png"
+            category="org.lisah.openfluid"
+            class="org.lisah.openfluid.wareshubclient.importWizards.WareshubClientWizard"
+            id="org.lisah.openfluid.wareshubclient.importWizards.ImportWizard">      
+      </wizard>
+   </extension>
+
+</plugin>

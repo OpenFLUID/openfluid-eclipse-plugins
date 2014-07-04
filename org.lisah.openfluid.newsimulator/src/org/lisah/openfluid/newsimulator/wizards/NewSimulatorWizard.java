@@ -149,8 +149,7 @@ public class NewSimulatorWizard extends Wizard implements INewWizard {
 
 			monitor.beginTask("Creating project...", 2);
 
-			
-			project = OpenFLUIDProjectFactory.createProject(workspace,simProperties.project);
+			project = OpenFLUIDProjectFactory.createProject(workspace,simProperties.project,null);
 			
 			location = (IContainer)project;
 		}

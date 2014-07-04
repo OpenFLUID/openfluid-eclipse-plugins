@@ -44,11 +44,13 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -56,8 +58,10 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 
 public class OpenFLUIDProjectFactory {
-
-	static public IProject createProject(IWorkspace workspace, String projectName) {
+	
+	static public IProject createProject(IWorkspace workspace, 
+			String projectName,
+			String projectPath) {
 
         IProject project = null;
         IWorkspaceRoot root = workspace.getRoot();
@@ -67,6 +71,12 @@ public class OpenFLUIDProjectFactory {
 		Assert.isTrue(!newProjectHandle.exists());
 
 		IProjectDescription projectDesc = workspace.newProjectDescription(newProjectHandle.getName());
+		
+		if (projectPath != null) {
+			File projectFilePath = new File(projectPath);
+			projectDesc.setLocationURI(projectFilePath.toURI());
+		}
+		
 		try {
 			project = CCorePlugin.getDefault().createCDTProject(projectDesc, newProjectHandle,new NullProgressMonitor());
 		} catch (OperationCanceledException e) {

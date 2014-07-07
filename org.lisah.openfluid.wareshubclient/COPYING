@@ -24,3 +24,12 @@
   Licensees for Other Usage of This program may use this file in
   accordance with the terms contained in the written agreement between
   You and INRA.
+  
+  
+==========================================================================
+  
+  
+ This program uses the minimal-json library which is available under the terms
+ of the Eclipse Public License (http://www.eclipse.org/legal/epl-v10.html)
+ The source code of the minimal-json library is available at:
+   https://github.com/ralfstx/minimal-json

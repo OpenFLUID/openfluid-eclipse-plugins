@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="wareshub.json"
+            filenames="wareshub.json"
+            icon="icons/openfluid-eclipse.png"
+            class="org.lisah.openfluid.wareshubjson.editors.JSONEditor"
+            id="org.lisah.openfluid.wareshubjson.editors.JSONEditor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="OpenFLUID"
+            id="org.lisah.openfluid">
+      </category>
+      <wizard
+            name="OpenFLUID wareshub.json file"
+            icon="icons/openfluid-eclipse.png"
+            category="org.lisah.openfluid"
+            class="org.lisah.openfluid.wareshubjson.wizards.NewJSONWizard"
+            id="org.lisah.openfluid.wareshubjson.wizards.NewJSONWizard">
+      </wizard>
+   </extension>
+
+</plugin>

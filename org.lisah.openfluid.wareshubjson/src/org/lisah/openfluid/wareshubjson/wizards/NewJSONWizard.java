@@ -4,6 +4,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.*;
 import java.lang.reflect.InvocationTargetException;
@@ -112,9 +113,7 @@ public class NewJSONWizard extends Wizard implements INewWizard {
 						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				try {
 					IDE.openEditor(page, file, true);
-					// TODO open wareshub.json editor instead of default editor
-				} catch (PartInitException e) {
-				}
+				} catch (PartInitException e) { }
 			}
 		});
 		monitor.worked(1);

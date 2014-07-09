@@ -361,8 +361,9 @@ public class JSONEditor extends EditorPart implements IResourceChangeListener{
 		issuesAddButton.setLayoutData(gd);
 		issuesAddButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {				
-				IssueDialog issueDlg = new IssueDialog(getSite().getShell());
-				issueDlg.open(null,WHJSONData.getIssueIDs());
+				IssueDialog issueDlg = new IssueDialog(getSite().getShell(),
+						null,WHJSONData.getIssueIDs());
+				issueDlg.open();
 
 				WaresHubJSONData.IssueData issueData = issueDlg.getIssueData();
 				if (issueData != null) {
@@ -418,6 +419,11 @@ public class JSONEditor extends EditorPart implements IResourceChangeListener{
 
 	}
 
+
+	// =====================================================================
+	// =====================================================================	
+	
+	
 	private void editSelectedIssue() {
 		int[] indices = issuesTable.getSelectionIndices();
 
@@ -425,8 +431,9 @@ public class JSONEditor extends EditorPart implements IResourceChangeListener{
 		{
 			String ID = issuesTable.getItem(indices[0]).getText(0);
 
-			IssueDialog issueDlg = new IssueDialog(getSite().getShell());					
-			issueDlg.open(WHJSONData.getIssue(ID),WHJSONData.getIssueIDs());
+			IssueDialog issueDlg = new IssueDialog(getSite().getShell(),
+					WHJSONData.getIssue(ID),WHJSONData.getIssueIDs());					
+			issueDlg.open();
 
 			WaresHubJSONData.IssueData issueData = issueDlg.getIssueData();
 			if (issueData != null) {

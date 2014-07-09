@@ -19,7 +19,7 @@
             id="org.lisah.openfluid">
       </category>
       <wizard
-            name="OpenFLUID wareshub.json file"
+            name="wareshub.json file"
             icon="icons/openfluid-eclipse.png"
             category="org.lisah.openfluid"
             class="org.lisah.openfluid.wareshubjson.wizards.NewJSONWizard"

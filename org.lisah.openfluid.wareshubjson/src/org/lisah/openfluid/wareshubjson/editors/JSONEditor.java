@@ -13,6 +13,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -23,10 +25,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.*;
-import org.eclipse.ui.forms.widgets.Form;
-import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
@@ -62,6 +63,7 @@ public class JSONEditor extends EditorPart implements IResourceChangeListener{
 
 	private Table issuesTable;
 	private Button issuesAddButton;
+	private Button issuesEditButton;
 	private Button issuesRemoveButton;
 
 	String inputFilePath = null;
@@ -298,9 +300,6 @@ public class JSONEditor extends EditorPart implements IResourceChangeListener{
 		});
 
 
-		// TODO add libs dependencies widgets
-
-
 		softwareComposite.pack();
 		softwareSection.setClient(softwareComposite);
 		softwareSection.pack();
@@ -328,7 +327,7 @@ public class JSONEditor extends EditorPart implements IResourceChangeListener{
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
 
-		issuesTable = toolkit.createTable(issuesComposite, SWT.BORDER | SWT.MULTI);		
+		issuesTable = toolkit.createTable(issuesComposite, SWT.BORDER);		
 		issuesTable.setHeaderVisible (true);
 		String[] titles = {"ID","Title","Type","State"};
 		for (int i=0; i<titles.length; i++) {
@@ -340,17 +339,75 @@ public class JSONEditor extends EditorPart implements IResourceChangeListener{
 		}
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalAlignment = GridData.FILL;
-		gd.verticalSpan = 2;
+		gd.verticalSpan = 3;
 		gd.minimumHeight = 250;
 		issuesTable.setLayoutData(gd);
+		issuesTable.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseDoubleClick(MouseEvent arg0) {
+				editSelectedIssue();
+			}
+
+			@Override
+			public void mouseDown(MouseEvent arg0) {}
+
+			@Override
+			public void mouseUp(MouseEvent arg0) {}
+		});
 
 		issuesAddButton = toolkit.createButton(issuesComposite,"Add...",SWT.PUSH);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL|GridData.VERTICAL_ALIGN_BEGINNING);               
 		issuesAddButton.setLayoutData(gd);
+		issuesAddButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {				
+				IssueDialog issueDlg = new IssueDialog(getSite().getShell());
+				issueDlg.open(null,WHJSONData.getIssueIDs());
+
+				WaresHubJSONData.IssueData issueData = issueDlg.getIssueData();
+				if (issueData != null) {
+					WHJSONData.addIssue(issueData);
+					updateIssuesFromData();
+					dialogChanged();
+				}
+			}
+		});
+
+
+		issuesEditButton = toolkit.createButton(issuesComposite,"Edit...",SWT.PUSH);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL|GridData.VERTICAL_ALIGN_BEGINNING);               
+		issuesEditButton.setLayoutData(gd);
+		issuesEditButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				editSelectedIssue();
+			}
+		});
 
 		issuesRemoveButton = toolkit.createButton(issuesComposite,"Remove...",SWT.PUSH);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL|GridData.VERTICAL_ALIGN_BEGINNING);
 		issuesRemoveButton.setLayoutData(gd);
+		issuesRemoveButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+
+				int[] indices = issuesTable.getSelectionIndices();
+
+				if (indices.length == 1)
+				{
+					String ID = issuesTable.getItem(indices[0]).getText(0);
+
+					boolean OK = MessageDialog.openConfirm(getSite().getShell(), 
+							"Removing \""+ID+"\"", 
+							"Are you sure to remove the \""+ID+"\" issue?");	
+
+					if (OK) {
+						WHJSONData.removeIssue(ID);
+						updateIssuesFromData();
+						dialogChanged();
+					}
+				}
+
+			}
+		});
 
 
 		issuesComposite.pack();
@@ -359,6 +416,25 @@ public class JSONEditor extends EditorPart implements IResourceChangeListener{
 
 		initialize();
 
+	}
+
+	private void editSelectedIssue() {
+		int[] indices = issuesTable.getSelectionIndices();
+
+		if (indices.length == 1)
+		{
+			String ID = issuesTable.getItem(indices[0]).getText(0);
+
+			IssueDialog issueDlg = new IssueDialog(getSite().getShell());					
+			issueDlg.open(WHJSONData.getIssue(ID),WHJSONData.getIssueIDs());
+
+			WaresHubJSONData.IssueData issueData = issueDlg.getIssueData();
+			if (issueData != null) {
+				WHJSONData.setIssue(issueData);
+				updateIssuesFromData();
+				dialogChanged();
+			}
+		}
 	}
 
 
@@ -463,7 +539,6 @@ public class JSONEditor extends EditorPart implements IResourceChangeListener{
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
 		form.setFocus();
 	}
 
@@ -499,7 +574,7 @@ public class JSONEditor extends EditorPart implements IResourceChangeListener{
 		statusCombo.setText("");
 		depsText.setText("");
 
-		issuesTable.clearAll();
+		issuesTable.removeAll();
 	}
 
 
@@ -529,6 +604,28 @@ public class JSONEditor extends EditorPart implements IResourceChangeListener{
 	// =====================================================================	
 
 
+	private void updateIssuesFromData() {
+		issuesTable.clearAll();
+		issuesTable.removeAll();
+
+		for (WaresHubJSONData.IssueData i: WHJSONData.getIssues()) {
+			TableItem item = new TableItem (issuesTable, SWT.NONE);
+			item.setText(0,i.getID());
+			item.setText(1,i.getTitle());
+			item.setText(2,i.getType());
+			item.setText(3,i.getState());
+		}
+
+		for (int i=0; i<issuesTable.getColumnCount(); i++) {
+			issuesTable.getColumn(i).pack();	
+		}
+	}
+
+
+	// =====================================================================
+	// =====================================================================	
+
+
 	private void updateFormFromData() {
 
 		tagsText.setText(stringArrayToCommaSeparatedString(WHJSONData.getTags()));
@@ -536,6 +633,8 @@ public class JSONEditor extends EditorPart implements IResourceChangeListener{
 		licenseCombo.setText(WHJSONData.getLicense());
 		statusCombo.setText(WHJSONData.getStatus());
 		depsText.setText(stringArrayToCommaSeparatedString(WHJSONData.getDependencies()));
+
+		updateIssuesFromData();
 	}
 
 

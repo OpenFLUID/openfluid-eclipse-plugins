@@ -16,3 +16,7 @@ Import-Package: org.eclipse.ui.forms.events,
  org.eclipse.ui.forms.widgets
 Bundle-ClassPath: .,
  libs/minimal-json-0.9.1.jar
+Export-Package: com.eclipsesource.json,
+ org.lisah.openfluid.wareshubjson,
+ org.lisah.openfluid.wareshubjson.editors,
+ org.lisah.openfluid.wareshubjson.wizards

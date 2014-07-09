@@ -3,15 +3,11 @@ package org.lisah.openfluid.wareshubjson.editors;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.io.Writer;
 import java.util.ArrayList;
-
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
@@ -19,7 +15,7 @@ import com.eclipsesource.json.ParseException;
 
 public class WaresHubJSONData {
 
-	public class IssueData {
+	public static class IssueData {
 
 		private String ID;
 
@@ -31,22 +27,29 @@ public class WaresHubJSONData {
 
 		private String type;
 
-		private boolean open;
+		private String state;
 
 		private String description;
 
 		private String urgency;
 
 		public IssueData() {
-
+			ID = "";
+			title = "";
+			creator = "";
+			date = "";
+			type = "";
+			state = "";
+			description = "";
+			urgency = "";
 		}
 
 		public String getID() {
 			return ID;
 		}
 
-		public void setID(String iD) {
-			ID = iD;
+		public void setID(String ID) {
+			this.ID = ID;
 		}
 
 		public String getTitle() {
@@ -81,12 +84,12 @@ public class WaresHubJSONData {
 			this.type = type;
 		}
 
-		public boolean isOpen() {
-			return open;
+		public String getState() {
+			return state;
 		}
 
-		public void setOpen(boolean open) {
-			this.open = open;
+		public void setState(String state) {
+			this.state = state;
 		}
 
 		public String getDescription() {
@@ -179,7 +182,6 @@ public class WaresHubJSONData {
 	}
 
 
-
 	public void setStatus(String status) {
 		this.status = status;
 	}
@@ -202,27 +204,52 @@ public class WaresHubJSONData {
 	
 
 	public IssueData getIssue(String ID) {
+		for (int i=0;i<issues.size();i++) {
+			if (issues.get(i).getID().equals(ID) ) {				
+				return issues.get(i);
+			}
+		}				
 		return null;
 	}
 
 
 	public void setIssue(IssueData data) {
 
+		for (int i=0;i<issues.size();i++) {
+			if (issues.get(i).getID().equals(data.getID())) {
+				issues.set(i,data);
+				return;
+			}
+		}		
+		addIssue(data);
 	}
 
 
 	public void addIssue(IssueData data) {
-
+		issues.add(data);
 	}
 
 
 	public void removeIssue(String ID) {
 
+		for (int i=0;i<issues.size();i++) {
+			if (issues.get(i).getID().equals(ID)) {
+				issues.remove(i);
+				return;
+			}
+		}		
 	}
 
 
-	public boolean isIssueExists(String ID) {
-		return false;
+	public ArrayList<String> getIssueIDs() {
+		
+		ArrayList<String> IDs = new ArrayList<String>();
+		
+		for (int i=0;i<issues.size();i++) {
+		  IDs.add(issues.get(i).getID());
+		}
+		
+		return IDs;
 	}
 
 
@@ -283,7 +310,9 @@ public class WaresHubJSONData {
 		
 		license = "";
 		status = "";
-		dependencies = new ArrayList<String>();		
+		dependencies = new ArrayList<String>();
+		
+		issues = new ArrayList<WaresHubJSONData.IssueData>();
 	}
 
 	
@@ -322,6 +351,63 @@ public class WaresHubJSONData {
 					setDependencies(jsonArrayToStringArray(infos.get("external-deps").asArray()));
 				}
 
+				
+				JsonValue issuesValue = infos.get("issues");
+				
+				if (issuesValue != null) {
+					JsonObject issuesObject = issuesValue.asObject();
+					
+					for(String ID : issuesObject.names()) {
+						
+						JsonObject currentObject = issuesObject.get(ID).asObject();
+						
+						if (currentObject != null) {
+						
+							IssueData issueData = new IssueData();						
+							
+							issueData.setID(ID);
+
+							if (currentObject.get("title") != null) {
+								issueData.setTitle(currentObject.get("title").asString());
+							}
+							  
+							if (currentObject.get("creator") != null) {
+								issueData.setCreator(currentObject.get("creator").asString());
+							}
+							
+							if (currentObject.get("date") != null) {
+								issueData.setDate(currentObject.get("date").asString());
+							}
+
+							if (currentObject.get("type") != null) {
+								issueData.setType(currentObject.get("type").asString());
+							}
+							
+							if (currentObject.get("state") != null) {
+								issueData.setState(currentObject.get("state").asString());
+							}
+							
+							if (currentObject.get("description") != null) {
+								issueData.setDescription(currentObject.get("description").asString());
+							}
+							
+							if (currentObject.get("urgency") != null) {
+								issueData.setUrgency(currentObject.get("urgency").asString());
+							}
+
+
+
+
+
+							
+							addIssue(issueData);
+						}
+						
+						
+						
+					}
+				}
+					
 				this.filePath = filePath;
 
 			} catch (IOException e) {
@@ -359,7 +445,25 @@ public class WaresHubJSONData {
 			writer.write("  \"status\": "+JsonObject.valueOf(getStatus()).toString()+",\n");
 			writer.write("  \"license\": "+JsonObject.valueOf(getLicense()).toString()+",\n");
 			writer.write("  \"external-deps\": "+stringArrayToJSONString(getDependencies())+",\n");
-			writer.write("  \"issues\": {\n");
+			writer.write("  \"issues\": {");
+			
+			String issueSep = "";
+			
+			for(IssueData i: issues) {
+				writer.write(issueSep+"\n");
+				writer.write("    \""+i.getID()+"\": {\n");
+				writer.write("      \"title\": "+JsonObject.valueOf(i.getTitle()).toString()+",\n");
+				writer.write("      \"creator\": "+JsonObject.valueOf(i.getCreator()).toString()+",\n");
+				writer.write("      \"date\": \""+i.getDate()+"\",\n");
+				writer.write("      \"type\": \""+i.getType()+"\",\n");
+				writer.write("      \"state\": \""+i.getState()+"\",\n");
+				writer.write("      \"description\": "+JsonObject.valueOf(i.getDescription()).toString()+",\n");
+				writer.write("      \"urgency\": \""+i.getUrgency()+"\"\n");
+				writer.write("    }");
+				
+				issueSep = ",";
+			}
+			writer.write("\n");
 			writer.write("  }\n");
 			writer.write("}\n");
 

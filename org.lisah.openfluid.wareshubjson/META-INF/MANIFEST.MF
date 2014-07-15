@@ -20,3 +20,4 @@ Export-Package: com.eclipsesource.json,
  org.lisah.openfluid.wareshubjson,
  org.lisah.openfluid.wareshubjson.editors,
  org.lisah.openfluid.wareshubjson.wizards
+Bundle-Vendor: LISAH

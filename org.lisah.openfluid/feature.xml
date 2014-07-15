@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.lisah.openfluid"
+      label="OpenFLUID development tools for Eclipse"
+      version="2.0.0.qualifier"
+      provider-name="LISAH">
+
+   <description>
+      This feature contains plugins for development of OpenFLUID wares (simulators, observers, builder-extensions)
+   </description>
+
+   <copyright>
+      Copyright (c) 2007 INRA-Montpellier SupAgro
+   </copyright>
+
+   <license url="">
+      == GNU General Public License Usage ==
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program  is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with This program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+  
+
+ == Other Usage ==
+
+  Other Usage means a use of This program that is inconsistent with
+  the GPL license, and requires a written agreement between You and INRA.
+  Licensees for Other Usage of This program may use this file in
+  accordance with the terms contained in the written agreement between
+  You and INRA.
+   </license>
+
+   <url>
+      <discovery label="OpenFLUID web site" url="http://www.openfluid-project.org"/>
+   </url>
+
+   <plugin
+         id="org.lisah.openfluid.common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.lisah.openfluid.newsim"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.lisah.openfluid.wareshubclient"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.lisah.openfluid.wareshubjson"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

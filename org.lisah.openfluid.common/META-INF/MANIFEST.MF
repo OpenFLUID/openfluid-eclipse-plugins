@@ -12,3 +12,4 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources;bundle-version="3.7.101"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.lisah.openfluid.common
+Bundle-Vendor: LISAH

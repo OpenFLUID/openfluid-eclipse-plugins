@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.lisah.openfluid_2.0.0.qualifier.jar" id="org.lisah.openfluid" version="2.0.0.qualifier">
+      <category name="OpenFLUID"/>
+   </feature>
+   <category-def name="OpenFLUID" label="OpenFLUID"/>
+</site>

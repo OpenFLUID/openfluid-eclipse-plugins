@@ -4,7 +4,7 @@ Bundle-Name: OpenFLUID simulator project
 Bundle-SymbolicName: org.lisah.openfluid.newsim;singleton:=true
 Bundle-Version: 2.0.0
 Bundle-Activator: org.lisah.openfluid.newsimulator.Activator
-Bundle-Vendor: lisah
+Bundle-Vendor: LISAH
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,

@@ -150,7 +150,7 @@ public class NewBuilderextWizard extends Wizard implements INewWizard {
 			monitor.beginTask("Creating project...", 2);
 
 			
-			project = OpenFLUIDProjectFactory.createProject(workspace,builderextProperties.project);
+			project = OpenFLUIDProjectFactory.createProject(workspace,builderextProperties.project,null);
 			
 			location = (IContainer)project;
 		}

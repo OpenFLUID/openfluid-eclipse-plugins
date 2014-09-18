@@ -30,7 +30,7 @@
 
 package org.lisah.openfluid.newsimulator.wizards;
 
-public class SimulatorInputData {
+public class SimulatorAttribute {
 
 	public String name;
 	public String unitClass;
@@ -38,7 +38,7 @@ public class SimulatorInputData {
 	public String SIUnit;
 	public Boolean isRequired;
 
-	public SimulatorInputData() {
+	public SimulatorAttribute() {
 		this.description = "";
 		this.isRequired = true;
 		this.name = "";

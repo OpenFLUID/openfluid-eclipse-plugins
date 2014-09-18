@@ -64,7 +64,7 @@ public class DataWizardPage extends WizardPage {
 	private Table varsTable;
 	private Table filesTable;	
 	private Table paramsTable;
-	private Table idataTable;
+	private Table attrsTable;
 	private Table sdgraphTable;
 	private Table eventsTable;
 	
@@ -72,19 +72,19 @@ public class DataWizardPage extends WizardPage {
 	private Button addFileButton;
 	private Button addParamButton;
 	private Button addSDGraphButton;
-	private Button addIDataButton;
+	private Button addAttrButton;
 	private Button addEventButton;
 	private Button editVarButton;
 	private Button editFileButton;
 	private Button editParamButton;
 	private Button editSDGraphButton;	
-	private Button editIDataButton;
+	private Button editAttrButton;
 	private Button editEventButton;		
 	private Button rmVarButton;
 	private Button rmFileButton;
 	private Button rmParamButton;
 	private Button rmSDGraphButton;	
-	private Button rmIDataButton;
+	private Button rmAttrButton;
 	private Button rmEventButton;	
 
 	private Button schedUndefinedButton;
@@ -408,7 +408,7 @@ public class DataWizardPage extends WizardPage {
 		
 		
 		
-		//=============== Input Data ===============  		
+		//=============== Attributes ===============  		
 		
 		
 		
@@ -419,37 +419,37 @@ public class DataWizardPage extends WizardPage {
 		colsTitles.add("Data condition"); 
 		colsTitles.add("Description");
 		
-		idataTable = new Table(parent, SWT.MULTI | SWT.BORDER); 
-		addIDataButton = new Button(parent,SWT.PUSH);
-		editIDataButton= new Button(parent,SWT.PUSH);		
-		rmIDataButton = new Button(parent,SWT.PUSH);		
+		attrsTable = new Table(parent, SWT.MULTI | SWT.BORDER); 
+		addAttrButton = new Button(parent,SWT.PUSH);
+		editAttrButton= new Button(parent,SWT.PUSH);		
+		rmAttrButton = new Button(parent,SWT.PUSH);		
 
 		
-		idataTable.addListener(SWT.Selection, new Listener() {
+		attrsTable.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {					
-				if (idataTable.getSelectionCount() == 1) editIDataButton.setEnabled(true);
-				else editIDataButton.setEnabled(false);
+				if (attrsTable.getSelectionCount() == 1) editAttrButton.setEnabled(true);
+				else editAttrButton.setEnabled(false);
 				
-				if (idataTable.getSelectionCount() >= 1) rmIDataButton.setEnabled(true);
-				else rmIDataButton.setEnabled(false);
+				if (attrsTable.getSelectionCount() >= 1) rmAttrButton.setEnabled(true);
+				else rmAttrButton.setEnabled(false);
 					
 			}
 		});
 
 		
 		
-		addTabItem(dataTab, "Input data", idataTable, colsTitles, addIDataButton, editIDataButton, rmIDataButton);
+		addTabItem(dataTab, "Attributes", attrsTable, colsTitles, addAttrButton, editAttrButton, rmAttrButton);
 
-		addIDataButton.addListener(SWT.Selection,new Listener() {
+		addAttrButton.addListener(SWT.Selection,new Listener() {
 			public void handleEvent(Event event) {
 		    	SimulatorDataDialog dataDialog;
 		    	dataDialog = new SimulatorDataDialog(getControl().getShell());
 		    	
-				if (dataDialog.open("Add input data declaration",
+				if (dataDialog.open("Add attribute declaration",
 						true, "",  false, "", 
 						true, "", true, "", SimulatorDataDialog.dataConditionType.ReqUsed, "", true, "", existingUnits)) {
 
-					TableItem item = new TableItem (idataTable, SWT.NONE);					
+					TableItem item = new TableItem (attrsTable, SWT.NONE);					
 					item.setText (0, dataDialog.getName());
 					item.setText (1, dataDialog.getUnitClass());
 					item.setText (2, dataDialog.getSIUnit());
@@ -462,14 +462,14 @@ public class DataWizardPage extends WizardPage {
 		});
 
 
-		editIDataButton.addListener(SWT.Selection,new Listener() {
+		editAttrButton.addListener(SWT.Selection,new Listener() {
 			public void handleEvent(Event event) {
 		    	SimulatorDataDialog dataDialog;
 		    	dataDialog = new SimulatorDataDialog(getControl().getShell());
 
-				TableItem item = idataTable.getItem(idataTable.getSelectionIndex()); 		    	
+				TableItem item = attrsTable.getItem(attrsTable.getSelectionIndex()); 		    	
 		    	
-				if (dataDialog.open("Edit input data declaration",
+				if (dataDialog.open("Edit attribute declaration",
 						true, item.getText(0), false, "", 
 						true, item.getText(1), 
 						true, item.getText(2), SimulatorDataDialog.dataConditionType.None, item.getText(3), 
@@ -488,9 +488,9 @@ public class DataWizardPage extends WizardPage {
 		});
 		
 		
-		rmIDataButton.addListener(SWT.Selection,new Listener() {
+		rmAttrButton.addListener(SWT.Selection,new Listener() {
 			public void handleEvent(Event event) {
-				idataTable.remove(idataTable.getSelectionIndices());				
+				attrsTable.remove(attrsTable.getSelectionIndices());				
 			}
 		});
 		
@@ -917,15 +917,15 @@ public class DataWizardPage extends WizardPage {
 		}
 		
 
-		for (i=0;i<idataTable.getItemCount();i++)
+		for (i=0;i<attrsTable.getItemCount();i++)
 		{
-			SimulatorInputData idata = new SimulatorInputData();
-			idata.name = idataTable.getItem(i).getText(0);
-			idata.unitClass = idataTable.getItem(i).getText(1);
-			idata.SIUnit = idataTable.getItem(i).getText(2);
-			idata.isRequired = idataTable.getItem(i).getText(3).toUpperCase().contains("REQUIRED");
-			idata.description = idataTable.getItem(i).getText(4);
-			properties.simulatorInputData.add(idata);
+			SimulatorAttribute attr = new SimulatorAttribute();
+			attr.name = attrsTable.getItem(i).getText(0);
+			attr.unitClass = attrsTable.getItem(i).getText(1);
+			attr.SIUnit = attrsTable.getItem(i).getText(2);
+			attr.isRequired = attrsTable.getItem(i).getText(3).toUpperCase().contains("REQUIRED");
+			attr.description = attrsTable.getItem(i).getText(4);
+			properties.simulatorAttributes.add(attr);
 		}
 		
 		

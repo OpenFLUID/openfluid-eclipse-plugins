@@ -284,7 +284,7 @@ public class NewSimulatorWizard extends Wizard implements INewWizard {
 		String tplContent = Str;
 		
 		String simDeclParams = "";		
-		String simDeclIData = "";
+		String simDeclAttrs = "";
 		String simDeclVars = "";
 		String simDeclEvents = "";
 		String simDeclFiles = "";
@@ -327,27 +327,27 @@ public class NewSimulatorWizard extends Wizard implements INewWizard {
 		
 		
 
-		Iterator<SimulatorInputData> itIData = null;
+		Iterator<SimulatorAttribute> itAttr = null;
 		
-		if (simProperties.simulatorInputData.size() > 0) {
-			itIData = simProperties.simulatorInputData.iterator();			
-			simDeclIData = "\n// Input data\n";			
-			SimulatorInputData idata = null;
+		if (simProperties.simulatorAttributes.size() > 0) {
+			itAttr = simProperties.simulatorAttributes.iterator();			
+			simDeclAttrs = "\n// Attributes\n";			
+			SimulatorAttribute attr = null;
 			
-			while (itIData.hasNext()) {
+			while (itAttr.hasNext()) {
 				
-				idata = itIData.next();
+				attr = itAttr.next();
 				
-				if (idata.isRequired) {
-					simDeclIData = simDeclIData + "  DECLARE_REQUIRED_INPUTDATA(\"";					
+				if (attr.isRequired) {
+					simDeclAttrs = simDeclAttrs + "  DECLARE_REQUIRED_ATTRIBUTE(\"";					
 				} else {
-					simDeclIData = simDeclIData + "  DECLARE_USED_INPUTDATA(\"";					
+					simDeclAttrs = simDeclAttrs + "  DECLARE_USED_ATTRIBUTE(\"";					
 				}
 				
-				simDeclIData = simDeclIData + idata.name + "\",\"" +
-												idata.unitClass + "\",\"" +
-												idata.description + "\",\"" +
-								 				idata.SIUnit + "\")\n";
+				simDeclAttrs = simDeclAttrs + attr.name + "\",\"" +
+												attr.unitClass + "\",\"" +
+												attr.description + "\",\"" +
+								 				attr.SIUnit + "\")\n";
 			}
 		}
 		
@@ -456,7 +456,7 @@ public class NewSimulatorWizard extends Wizard implements INewWizard {
 		
 		
 		tplContent = tplContent.replaceAll("\\$\\$SIMULATORDECLARATION_PARAMS\\$\\$", simDeclParams);
-		tplContent = tplContent.replaceAll("\\$\\$SIMULATORDECLARATION_IDATA\\$\\$", simDeclIData);		
+		tplContent = tplContent.replaceAll("\\$\\$SIMULATORDECLARATION_ATTRS\\$\\$", simDeclAttrs);		
 		tplContent = tplContent.replaceAll("\\$\\$SIMULATORDECLARATION_VARS\\$\\$", simDeclVars);
 		tplContent = tplContent.replaceAll("\\$\\$SIMULATORDECLARATION_EVENTS\\$\\$", simDeclEvents);
 		tplContent = tplContent.replaceAll("\\$\\$SIMULATORDECLARATION_FILES\\$\\$", simDeclFiles);

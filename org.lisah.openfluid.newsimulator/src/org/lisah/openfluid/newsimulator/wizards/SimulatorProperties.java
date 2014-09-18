@@ -50,7 +50,7 @@ public class SimulatorProperties extends OpenFLUIDPluginProperties {
 
 
 	public ArrayList<SimulatorParameter> simulatorParameters;
-	public ArrayList<SimulatorInputData> simulatorInputData;
+	public ArrayList<SimulatorAttribute> simulatorAttributes;
 	public ArrayList<SimulatorVariable> simulatorVariables;
 	public ArrayList<SimulatorEvent> simulatorEvents;
 	public ArrayList<SimulatorExtraFile> simulatorExtraFiles;
@@ -63,7 +63,7 @@ public class SimulatorProperties extends OpenFLUIDPluginProperties {
 		super();
 		
 		simulatorParameters = new ArrayList<SimulatorParameter>();
-		simulatorInputData = new ArrayList<SimulatorInputData>();		
+		simulatorAttributes = new ArrayList<SimulatorAttribute>();		
 		simulatorVariables = new ArrayList<SimulatorVariable>();
 		simulatorEvents = new ArrayList<SimulatorEvent>();
 		simulatorExtraFiles = new ArrayList<SimulatorExtraFile>();
@@ -78,7 +78,7 @@ public class SimulatorProperties extends OpenFLUIDPluginProperties {
 		this.simulatorEvents.clear();
 		this.simulatorExtraFiles.clear();
 		this.simulatorID = "";
-		this.simulatorInputData.clear();
+		this.simulatorAttributes.clear();
 		this.simulatorMethod = "";
 		this.simulatorName = "";
 		this.simulatorParameters.clear();

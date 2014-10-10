@@ -31,7 +31,6 @@ package org.lisah.openfluid.common;
 
 import java.io.File;
 import java.io.IOException;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -44,13 +43,11 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -58,7 +55,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 
 public class OpenFLUIDProjectFactory {
-	
+
 	static public IProject createProject(IWorkspace workspace, 
 			String projectName,
 			String projectPath) {
@@ -112,7 +109,6 @@ public class OpenFLUIDProjectFactory {
 		try {
 			cprojectDesc.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
 		} catch (WriteAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (CoreException e) {
 			System.out.println(e);
@@ -131,44 +127,94 @@ public class OpenFLUIDProjectFactory {
     static public void configureProject(IProject project) {
 		
 	}
-	
+	    
     
     static public void configureBuildSystem(OpenFLUIDPluginProperties properties, IContainer container, IProject project) {
+
+		String ProjectPath = container.getLocation().toString();
+		String ProjectBuildPath = container.getLocation().toString()+"/"+properties.buildSubdir;
+		
+		if (System.getProperty("os.name").startsWith("Windows")) {
+			ProjectPath = "\""+container.getLocation().toString()+"\"";
+		}
+			
+
 		IFolder buildFolder = container.getFolder(new Path(properties.buildSubdir));
-		if (!buildFolder.exists())
+		if (!buildFolder.exists()) {
 			try {
 				buildFolder.create(true, true, null);
 			} catch (CoreException e1) {
 				System.out.println(e1);
-			}				
-
-		if (properties.isNewProject && project != null)
-		{
+			}						
+		}
+		
+		
+		if (properties.isNewProject && project != null) {
 			IConfiguration configuration = ManagedBuildManager.getBuildInfo(project).getDefaultConfiguration();
 			//configuration.setBuildArguments("install");
 			try {
+				configuration.getBuilder().setCommand(properties.cmakeCommandPath);
+                configuration.getBuilder().setArguments("--build \"${workspace_loc:/" +project.getDescription().getName() + "}/"  + properties.buildSubdir+"\" --target");
 				configuration.getBuilder().setFullBuildTarget("install");
 			} catch (CoreException e) {
 				System.out.println(e);
 			}
-			String buildPath = configuration.getEditableBuilder().getBuildPath() + "/" + properties.buildSubdir;
+			String buildPath = configuration.getEditableBuilder().getBuildPath() + properties.buildSubdir;
 			configuration.getEditableBuilder().setBuildPath(buildPath);
 			ManagedBuildManager.saveBuildInfo(project, true);
 		}
 		
+		
 		if (properties.runCMake && properties.cmakeCommandPath != "") {
+			
+			String commands[] = {};
+			
+			if (System.getProperty("os.name").equals("Linux")) {
+				commands = new String[] { properties.cmakeCommandPath, ProjectPath};
+			}
+			else if (System.getProperty("os.name").startsWith("Windows")) {
+				String OpenFLUIDInstallPrefix = System.getenv("OPENFLUID_INSTALL_PREFIX");								
+				
+				if (!OpenFLUIDInstallPrefix.isEmpty()) {
 
-			try {
-				Runtime.getRuntime().exec( new String[] { properties.cmakeCommandPath, container.getLocation().toString()},
-						null,
-						new File(container.getLocation().toString() + "/" + properties.buildSubdir));
-			} catch (IOException e) {
-				System.out.println(e);
+					commands = new String[] { 
+							properties.cmakeCommandPath, 
+							ProjectPath,
+							"-G \"MinGW Makefiles\"",
+							"-DOpenFLUID_DIR=" + OpenFLUIDInstallPrefix + "/lib/cmake",
+							"-DBOOST_ROOT=" + OpenFLUIDInstallPrefix};
+				}
+			}
+			
+			
+			if (commands.length > 0)
+			{
+				try {
+					// Aggregate commands as a single string
+					String commandStr = "";
 
+					for (String s : commands) {  
+						commandStr += s + " ";
+					}  
+
+					Process p = 
+							Runtime.getRuntime().exec(commandStr,null,
+									new File(ProjectBuildPath));
+
+					OpenFLUIDExecStream outStream = new OpenFLUIDExecStream(p.getInputStream());
+					OpenFLUIDExecStream errorStream = new OpenFLUIDExecStream(p.getErrorStream());
+
+					new Thread(outStream).start();
+					new Thread(errorStream).start();
+
+					p.waitFor();
+
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-
-		
 	}
-    
 }

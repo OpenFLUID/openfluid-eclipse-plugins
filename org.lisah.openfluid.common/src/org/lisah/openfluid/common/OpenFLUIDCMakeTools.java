@@ -26,11 +26,13 @@ public class OpenFLUIDCMakeTools {
             String[] cmakeVersionStrTokens = cmakeVersionStr.split(" ");
                         
 
-            if (cmakeVersionStrTokens.length == 3 &&  cmakeVersionStrTokens[0].equals("cmake")) {
+            if (cmakeVersionStrTokens.length >= 3 &&  cmakeVersionStrTokens[0].equals("cmake")) {
             	String[] cmakeVersionNbrTokens = cmakeVersionStrTokens[2].split("\\.");            	
 
             	try {
-            		if (cmakeVersionNbrTokens.length == 3 && Integer.parseInt(cmakeVersionNbrTokens[0]) >= 2 && Integer.parseInt(cmakeVersionNbrTokens[1]) >= 8) {
+            		if (cmakeVersionNbrTokens.length >= 3 && 
+            			Integer.parseInt(cmakeVersionNbrTokens[0]) >= 2 && 
+            			Integer.parseInt(cmakeVersionNbrTokens[1]) >= 8) {
             			foundCMakeCommand = cmakeProgram;		
             		}
             	}

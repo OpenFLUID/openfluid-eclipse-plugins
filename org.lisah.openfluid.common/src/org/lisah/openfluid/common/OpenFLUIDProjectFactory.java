@@ -129,13 +129,14 @@ public class OpenFLUIDProjectFactory {
 	}
 	    
     
+    
     static public void configureBuildSystem(OpenFLUIDPluginProperties properties, IContainer container, IProject project) {
 
-		String ProjectPath = container.getLocation().toString();
-		String ProjectBuildPath = container.getLocation().toString()+"/"+properties.buildSubdir;
+		String projectPath = container.getLocation().toString();
+		String projectBuildPath = container.getLocation().toString()+"/"+properties.buildSubdir;
 		
 		if (System.getProperty("os.name").startsWith("Windows")) {
-			ProjectPath = "\""+container.getLocation().toString()+"\"";
+			projectPath = "\""+container.getLocation().toString()+"\"";
 		}
 			
 
@@ -166,55 +167,7 @@ public class OpenFLUIDProjectFactory {
 		
 		
 		if (properties.runCMake && properties.cmakeCommandPath != "") {
-			
-			String commands[] = {};
-			
-			if (System.getProperty("os.name").equals("Linux")) {
-				commands = new String[] { properties.cmakeCommandPath, ProjectPath};
-			}
-			else if (System.getProperty("os.name").startsWith("Windows")) {
-				String OpenFLUIDInstallPrefix = System.getenv("OPENFLUID_INSTALL_PREFIX");								
-				
-				if (!OpenFLUIDInstallPrefix.isEmpty()) {
-
-					commands = new String[] { 
-							properties.cmakeCommandPath, 
-							ProjectPath,
-							"-G \"MinGW Makefiles\"",
-							"-DOpenFLUID_DIR=" + OpenFLUIDInstallPrefix + "/lib/cmake",
-							"-DBOOST_ROOT=" + OpenFLUIDInstallPrefix};
-				}
-			}
-			
-			
-			if (commands.length > 0)
-			{
-				try {
-					// Aggregate commands as a single string
-					String commandStr = "";
-
-					for (String s : commands) {  
-						commandStr += s + " ";
-					}  
-
-					Process p = 
-							Runtime.getRuntime().exec(commandStr,null,
-									new File(ProjectBuildPath));
-
-					OpenFLUIDExecStream outStream = new OpenFLUIDExecStream(p.getInputStream());
-					OpenFLUIDExecStream errorStream = new OpenFLUIDExecStream(p.getErrorStream());
-
-					new Thread(outStream).start();
-					new Thread(errorStream).start();
-
-					p.waitFor();
-
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
+			OpenFLUIDCMakeTools.runCMakeCommand(properties.cmakeCommandPath, projectPath, projectBuildPath);
 		}
 	}
 }

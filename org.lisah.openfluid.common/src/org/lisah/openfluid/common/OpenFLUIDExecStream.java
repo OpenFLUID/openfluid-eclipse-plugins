@@ -49,10 +49,10 @@ public class OpenFLUIDExecStream implements Runnable {
 	@Override
 	public void run() {
 		BufferedReader br = getBufferedReader(inputStream);
-		String ligne = "";
+		String line = "";
 		try {
-			while ((ligne = br.readLine()) != null) {
-				System.out.println(ligne);
+			while ((line = br.readLine()) != null) {
+				System.out.println(line);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -30,7 +30,6 @@
 package org.lisah.openfluid.common;
 
 import java.io.File;
-import java.io.IOException;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -167,7 +166,7 @@ public class OpenFLUIDProjectFactory {
 		
 		
 		if (properties.runCMake && properties.cmakeCommandPath != "") {
-			OpenFLUIDCMakeTools.runCMakeCommand(properties.cmakeCommandPath, projectPath, projectBuildPath);
+			OpenFLUIDCMakeTools.runCMakeCommand(properties.cmakeCommandPath, projectPath, projectBuildPath,false);
 		}
 	}
 }

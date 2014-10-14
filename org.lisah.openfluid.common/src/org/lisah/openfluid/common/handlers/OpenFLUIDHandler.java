@@ -1,6 +1,5 @@
 package org.lisah.openfluid.common.handlers;
 
-import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -11,10 +10,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.console.AbstractConsole;
 import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
-import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -79,9 +77,10 @@ public class OpenFLUIDHandler extends AbstractHandler {
 				}						
 			}
 			
+			
 			if (buildFolder.exists()) {
 				if (!cmakeCommandPath.isEmpty()) {
-					OpenFLUIDCMakeTools.runCMakeCommand(cmakeCommandPath, projectPath, projectBuildPath);
+					OpenFLUIDCMakeTools.runCMakeCommand(cmakeCommandPath, projectPath, projectBuildPath,true);
 				} else {
 					MessageDialog.openError(
 							window.getShell(),

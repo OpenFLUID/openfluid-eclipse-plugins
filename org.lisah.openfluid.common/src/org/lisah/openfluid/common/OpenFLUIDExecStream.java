@@ -32,27 +32,35 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 
 public class OpenFLUIDExecStream implements Runnable {
 
 	private final InputStream inputStream;
+	private final OutputStream outputStream;
 
-	OpenFLUIDExecStream(InputStream inputStream) {
+	OpenFLUIDExecStream(InputStream inputStream,OutputStream outputStream) {
 		this.inputStream = inputStream;
+		this.outputStream = outputStream;
 	}
 
 	private BufferedReader getBufferedReader(InputStream is) {
 		return new BufferedReader(new InputStreamReader(is));
 	}
 
+	
 	@Override
 	public void run() {
+		
 		BufferedReader br = getBufferedReader(inputStream);
+		PrintStream ps = new PrintStream(outputStream);
+		
 		String line = "";
 		try {
 			while ((line = br.readLine()) != null) {
-				System.out.println(line);
+				ps.println(line);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
